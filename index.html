@@ -2,84 +2,77 @@
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width">
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
 
-        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
 
-        <link rel="stylesheet" href="css/normalize.css">
-        <link rel="stylesheet" href="css/main.css">
-        <script src="js/vendor/modernizr-2.6.2.min.js"></script>
-        <!-- Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-        <!-- Optional theme -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-        <!-- Firebase -->
-        <script src='https://cdn.firebase.com/js/client/2.0.2/firebase.js'></script>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/main.css">
+    <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
 
-        <!-- Firechat -->
-        <link rel='stylesheet' href='https://cdn.firebase.com/libs/firechat/2.0.1/firechat.min.css' />
-        <script src='https://cdn.firebase.com/libs/firechat/2.0.1/firechat.min.js'></script>
-    </head>
-    <body role="document">
-        <!--[if lt IE 7]>
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+    <!-- Firebase -->
+    <script src='https://cdn.firebase.com/js/client/2.0.2/firebase.js'></script>
+
+    <!-- Firechat -->
+    <link rel='stylesheet' href='https://cdn.firebase.com/libs/firechat/2.0.1/firechat.min.css' />
+    <script src='https://cdn.firebase.com/libs/firechat/2.0.1/firechat.min.js'></script>
+</head>
+
+<body role="document">
+    <!--[if lt IE 7]>
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
 
-        <!-- Add your site or application content here -->
-        <div class="panel panel-default">
-          <div class="panel-body">
+    <!-- Add your site or application content here -->
+    <div class="panel panel-default">
+        <div class="panel-body">
             <div class="alert alert-success" role="alert"><span class="glyphicon glyphicon-star" aria-hidden="true"></span> Hello world! This is HTML5 & Bootstrap Boilerplate.</div>
-              Testing... <strong>firebase</strong>.</div>
-        </div>
-        
-        <script type='text/javascript'>
-      // Create a new Firebase reference, and a new instance of the Login client
-      var chatRef = new Firebase('https://iisjreg-playground.firebaseio.com/chat');
-      chatRef.onAuth(function(authData) {
-        // Once authenticated, instantiate Firechat with our user id and user name
-        if (authData) {
-          var chat = new FirechatUI(chatRef, document.getElementById('firechat-wrapper'));
-          chat.setUser(authData.uid, authData[authData.provider].displayName);
-        }
-      });
-      function login(provider) {
-        chatRef.authWithOAuthPopup(provider, function(error, authData) {
-          if (error) {
-            console.log(error);
-          }
-        });
-      var chat = new Firechat(firebaseRef);
-      chat.setUser(userId, userName, function(user) {
-      chat.resumeSession();
-        });
-      }
-    </script>
-    <div id='firechat-wrapper'>
-      <button type="button" class="btn btn-default btn-lg" onclick='login("twitter");'>FireChat Login</button>
-      
-    </div>
-        
-        <!-- scripts -->
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.0.min.js"><\/script>')</script>
-        <script src="js/plugins.js"></script>
-        <script src="js/main.js"></script>
-        <!-- Latest compiled and minified JavaScript -->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+            Testing... <strong>firebase</strong>.
+            <br/>
 
-        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-        <script>
-            var _gaq=[['_setAccount','UA-57053107-1'],['_trackPageview']];
-            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-            g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-            s.parentNode.insertBefore(g,s)}(document,'script'));
-        </script>
-    </body>
+        </div>
+    </div>
+
+
+
+
+
+    <!-- scripts -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script>
+        window.jQuery || document.write('<script src="js/vendor/jquery-1.9.0.min.js"><\/script>')
+    </script>
+    <script src="js/plugins.js"></script>
+    <script src="js/main.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+    <script>
+        var _gaq = [
+            ['_setAccount', 'UA-57053107-1'],
+            ['_trackPageview']
+        ];
+        (function(d, t) {
+            var g = d.createElement(t),
+                s = d.getElementsByTagName(t)[0];
+            g.src = ('https:' == location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js';
+            s.parentNode.insertBefore(g, s)
+        }(document, 'script'));
+    </script>
+</body>
+
 </html>
