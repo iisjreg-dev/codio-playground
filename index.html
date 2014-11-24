@@ -41,37 +41,15 @@
         <div class="panel-body">
             <div class="alert alert-success" role="alert"><span class="glyphicon glyphicon-star" aria-hidden="true"></span> Hello world! This is HTML5 & Bootstrap Boilerplate.</div>
             <div class="panel panel-default">
-                <div class="panel-heading">Testing... <strong>firebase</strong>.</div>
+                <div class="panel-heading">Testing... <strong>firebase</strong>. <input type='text' id='nameInput' placeholder='Name'></div>
                 <div class="panel-body">
                     <div id='messagesDiv'></div>
-                    <input type='text' id='nameInput' placeholder='Name'>
-                    <input type='text' id='messageInput' placeholder='Message'>
-                    <button type="button" class="btn btn-primary btn-xs" onClick="messageSend();">Send!</button>
-                    <script>
-                        var myDataRef = new Firebase('https://iisjreg-playground.firebaseio.com/chat');
-
-                        function messageSend() {
-                            var name = $('#nameInput').val();
-                            var text = $('#messageInput').val();
-                            var time = new Date();
-                            myDataRef.push({
-                                name: name,
-                                text: text,
-                                time: time.toUTCString()
-                            });
-                            $('#messageInput').val('');
-                        };
-                        myDataRef.on('child_added', function(snapshot) {
-                            var message = snapshot.val();
-                            displayChatMessage(message.name, message.text, message.time);
-                        });
-
-                        function displayChatMessage(name, text, time) {
-                            //var timeString = time.toTimeString();
-                            $('<div/>').text(text).prepend($('<em/>').text(' ' + name + ': ')).prepend($('<span class="label label-info" />').text('(' + time + ')')).appendTo($('#messagesDiv'));
-                            $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
-                        };
-                    </script>
+                </div>
+                <div class="panel-footer">
+                    <div class="input-group">
+                        <input type='text' id='messageInput' placeholder='Message' class="form-control">
+                        <span class="input-group-btn"><button class="btn btn-default" type="button" onClick="messageSend();">Go!</button></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -82,6 +60,31 @@
 
 
     <!-- scripts -->
+    <script>
+        var myDataRef = new Firebase('https://iisjreg-playground.firebaseio.com/chat');
+
+        function messageSend() {
+            var name = $('#nameInput').val();
+            var text = $('#messageInput').val();
+            var time = new Date();
+            myDataRef.push({
+                name: name,
+                text: text,
+                time: time.toUTCString()
+            });
+            $('#messageInput').val('');
+        };
+        myDataRef.on('child_added', function(snapshot) {
+            var message = snapshot.val();
+            displayChatMessage(message.name, message.text, message.time);
+        });
+
+        function displayChatMessage(name, text, time) {
+            //var timeString = time.toTimeString();
+            $('<div/>').text(text).prepend($('<em/>').text(' ' + name + ': ')).prepend($('<span class="label label-info" />').text('(' + time + ')')).appendTo($('#messagesDiv'));
+            $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
+        };
+    </script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
     <script>
         window.jQuery || document.write('<script src="js/vendor/jquery-1.9.0.min.js"><\/script>')
