@@ -38,7 +38,7 @@ Choose one of the following options:
 * Useful CSS helpers.
 * Default print CSS, performance optimized.
 * Protection against any stray `console.log` causing JavaScript errors in
-  IE6/7.
+  IE6/7.bower install bootstrap
 * An optimized Google Analytics snippet.
 * Apache server caching, compression, and other configuration defaults for
   Grade-A performance.
