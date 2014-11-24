@@ -36,12 +36,15 @@
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
 
-    <!-- Add your site or application content here -->
+
+    
     <div class="panel panel-default">
         <div class="panel-body">
             <div class="alert alert-success" role="alert"><span class="glyphicon glyphicon-star" aria-hidden="true"></span> Hello world! This is HTML5 & Bootstrap Boilerplate.</div>
             <div class="panel panel-default">
-                <div class="panel-heading">Testing... <strong>firebase</strong>. <input type='text' id='nameInput' placeholder='Name'></div>
+                <div class="panel-heading">Testing... <strong>firebase</strong>.
+                    <input type='text' id='nameInput' placeholder='Name'>
+                </div>
                 <div class="panel-body">
                     <div id='messagesDiv'></div>
                 </div>
@@ -62,7 +65,7 @@
     <!-- scripts -->
     <script>
         var myDataRef = new Firebase('https://iisjreg-playground.firebaseio.com/chat');
-
+        
         function messageSend() {
             var name = $('#nameInput').val();
             var text = $('#messageInput').val();

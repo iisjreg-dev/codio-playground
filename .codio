@@ -12,6 +12,6 @@
         "Current File (static)": "https://{{domain}}/{{filepath}}",
         "Box URL": "http://{{domain}}",
         "Box URL SSL": "https://{{domain}}:9500/",
-        "Visit Ungit": "https://{{domain}}:9501/#/repository?path=/home/codio/workspace"
+        "Ungit": "https://{{domain}}:9501/#/repository?path=/home/codio/workspace"
   }
 }
