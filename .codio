@@ -3,7 +3,8 @@
 
 // Run button configuration
   "commands": {
-        "Node version": "node --version"
+        "Node version": "node --version",
+        "Firebase deploy": "firebase deploy"
   },
 
 // Preview button configuration
