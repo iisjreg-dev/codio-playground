@@ -1,22 +1,22 @@
 <div content-for="title">
     <span>FireChat test</span>
 </div>
-<div content-for="footerBar">
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <input type='text' label="Name" ng-model='$parent.msg' ng-keyup="addMessage($event)" id='msg' placeholder='Message' class="form-control">
-        </div>
-    </div>
-</div>
+
 
 <div class="scrollable">
-    <div class="scrollable-content section">
-
+    <div class="scrollable-content section" ng-controller="ChatController">
+        <div content-for="footerBar">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <input type='text' label="Name" ng-model='msg' ng-keyup="addMessage($event)" id='msg' placeholder='Message' class="form-control">
+                </div>
+            </div>
+        </div>
         <form class="chatMessage">
 
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <input type='text' ng-model='$parent.name' id='nameInput' placeholder='Name' class="form-control">
+                    <input type='text' ng-model='name' id='nameInput' placeholder='Name' class="form-control">
                 </div>
             </div>
             <div class="list-group" id='messagesList'>

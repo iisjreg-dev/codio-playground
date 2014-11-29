@@ -24,17 +24,12 @@ app.config(function($routeProvider, $locationProvider) {
     $routeProvider.when('/chat', {
         templateUrl: "chat.html"
     });
+    $routeProvider.when('/score', {
+        templateUrl: "score.html"
+    });
 });
 
-app.controller('MainController', function($rootScope, $scope, $firebase) {
-    //ROUTING
-    $rootScope.$on("$routeChangeStart", function() {
-        $rootScope.loading = true;
-    });
-    $rootScope.$on("$routeChangeSuccess", function() {
-        $rootScope.loading = false;
-    });
-    
+app.controller('ChatController', function($rootScope, $scope, $firebase) {
     //CHAT TESTING
     
     //CREATE A FIREBASE REFERENCE
@@ -64,6 +59,45 @@ app.controller('MainController', function($rootScope, $scope, $firebase) {
             $scope.msg = "";
         }
     }
+});
+
+app.controller('ScoreController', function($rootScope, $scope, $firebase) {
+    //CHAT TESTING
+    
+    //CREATE A FIREBASE REFERENCE
+    var ref = new Firebase("https://iisjreg-playground.firebaseio.com/scores");
+    
+    // GET MESSAGES AS AN ARRAY
+    var scoresSync = $firebase(ref);
+    var scores = scoresSync.$asObject();
+    scores.$bindTo($scope, "scores");
+
+    $scope.updateScores = function() {
+            //ALLOW CUSTOM OR ANONYMOUS USER NAMES
+            var p1Score = $scope.scores.p1Score || 0;
+            var p2Score = $scope.scores.p2Score || 0;
+
+            var time = new Date();
+            //ADD TO FIREBASE
+            console.log(p1Score);
+            console.log(p2Score);
+            scores.p1Score = p1Score;
+            scores.p2Score = p2Score;
+            scores.$save();
+
+    }
+});
+
+app.controller('MainController', function($rootScope, $scope) {
+    //ROUTING
+    $rootScope.$on("$routeChangeStart", function() {
+        $rootScope.loading = true;
+    });
+    $rootScope.$on("$routeChangeSuccess", function() {
+        $rootScope.loading = false;
+    });
+    
+    
     
     //OTHER DEMO STUFF
     var scrollItems = [];
