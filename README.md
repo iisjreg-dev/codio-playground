@@ -5,4 +5,5 @@
 * Angular
 * Bootstrap
 * Firebase
+* MobileAngularUI
 * JQuery
