@@ -23,7 +23,7 @@
                 <div class="list-group-item" ng-repeat='msg in messages | orderBy:predicate:reverse'>
                     <span class="label label-info">{{msg.time}}</span>  <strong>{{msg.name}}</strong> - {{msg.text}} <i class="fa fa-trash navbar-right" aria-hidden="true" ng-click="messages.$remove(msg)"></i>
                 </div>
-                </ul>
+                
             </div>
             <!-- <div class="panel-footer">
                     <div class="input-group">
