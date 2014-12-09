@@ -14,7 +14,7 @@
                         <h1>{{score.playerScore}}</h1>
                     </div>
                     <div class="media-body">
-                        <h3 class="media-heading">Player {{score.playerID}} <i class="fa fa-trash navbar-right" aria-hidden="true" ng-click="scores.$remove(score)"></i></h3> 
+                        <h3 class="media-heading">Player {{score.playerID}} </h3> 
                         <div class="btn-group">
 
                             <button class="btn btn-success" ng-click="updateScore(score,1)">+1</button>
@@ -28,6 +28,7 @@
 
 
                         </div>
+                        <i class="fa fa-trash navbar-right" aria-hidden="true" ng-click="scores.$remove(score)"></i>
 
                     </div>
                 </div>

@@ -30,6 +30,18 @@ app.config(function($routeProvider, $locationProvider) {
     $routeProvider.when('/score2', {
         templateUrl: "score2.html"
     });
+    $routeProvider.when('/score3', {
+        templateUrl: "score3.html"
+    });
+    $routeProvider.when('/score3/plays/:playID', {
+        templateUrl: "score3-play.html"
+        //params.playID
+    });
+    
+    $routeProvider.when('/score3/plays/:playID/history', {
+        templateUrl: "score3-history.html"
+        //params.playID
+    });
 });
 app.controller('ChatController', function($rootScope, $scope, $firebase) {
     //CHAT TESTING
@@ -64,6 +76,10 @@ app.controller('ScoreController', function($rootScope, $scope, $firebase) {
     //SCORE TESTING
     //CREATE A FIREBASE REFERENCE
     var ref = new Firebase("https://iisjreg-playground.firebaseio.com/scores");
+    //
+    // first score demo
+    //
+    //
     // GET SCORES AS AN OBJECT
     var scoresSync = $firebase(ref);
     var scores = scoresSync.$asObject();
@@ -84,6 +100,11 @@ app.controller('ScoreController2', function($rootScope, $scope, $firebase) {
     //SCORE TESTING - n Players
     //CREATE A FIREBASE REFERENCE
     var ref = new Firebase("https://iisjreg-playground.firebaseio.com/scores2");
+    //
+    // adds n-players scoring, with buttons for adding/subtracting
+    // and adding /deleting players
+    //
+    //
     var scores = $firebase(ref).$asArray();
     scores.$loaded().then(function() {
         console.log(scores.length + " players");
@@ -93,6 +114,8 @@ app.controller('ScoreController2', function($rootScope, $scope, $firebase) {
             console.log("Player '" + deletedPost.playerID + "' has been deleted");
             numberOfPlayers -= 1;
         });
+        $scope.numberOfPlayers = numberOfPlayers;
+        $scope.scores = scores;
         $scope.increasePlayers = function() {
             numberOfPlayers += 1;
             $scope.scores.$add({
@@ -125,9 +148,111 @@ app.controller('ScoreController2', function($rootScope, $scope, $firebase) {
         $scope.logInfo = function() {
             console.log(scores);
         }
-        $scope.numberOfPlayers = numberOfPlayers;
-        $scope.scores = scores;
     });
+});
+app.controller('ScoreController3', function($rootScope, $scope, $firebase, $routeParams) {
+    //SCORE TESTING - n Players
+    //
+    //add score history & plays (instances of a game)
+    //
+    //TODO struct: scores3>players>$playerID>$scoreID>score & timestamp ???
+    //
+    //
+    //
+    var params = $routeParams;
+    if(params.playID) {
+        //show play
+        console.log("params playID = " + params.playID);
+        var playRef = new Firebase("https://iisjreg-playground.firebaseio.com/scores3/" + params.playID);
+        var play = $firebase(playRef).$asObject();
+        play.$bindTo($scope, "play");
+        
+        var playerRef = new Firebase("https://iisjreg-playground.firebaseio.com/scores3/" + params.playID + "/players");
+        var players = $firebase(playerRef).$asArray();
+        
+        players.$loaded().then(function() {
+            console.log(players.length + " players in play");
+            var numberOfPlayers = players.length;
+            playerRef.on("child_removed", function(snapshot) {
+                var deletedPost = snapshot.val();
+                console.log("Player '" + deletedPost.playerName + "' has been deleted");
+                numberOfPlayers -= 1;
+            });
+            
+            //playerRef.on("value", function(snapshot) {
+            //    var post = snapshot.val();
+            //    console.log(post);
+            //});
+            
+            $scope.numberOfPlayers = numberOfPlayers;
+            $scope.players = players;
+            $scope.addPlayer = function() {
+                numberOfPlayers += 1;
+                var playerName = $scope.playerName || 'anonymous';
+                //ADD TO FIREBASE
+                console.log(playerName);
+                $scope.players.$add({
+                    playerName: playerName,
+                    playerScore: 0
+                });
+                $scope.playerName = "";
+            }
+            $scope.updateScore = function(player, update) {
+                console.log("Player " + player.playerName + ", " + update);
+                var newScore = player.playerScore + update; 
+                player.playerScore = newScore;
+                players.$save(player).then(function() {
+                // data has been saved to Firebase
+                    console.log(" -> updated");
+                });
+                var time = new Date();
+                var playerScoreRef = playerRef.child(player.$id + "/scores");
+                playerScoreRef.push({
+                    score: newScore,
+                    time: time.toUTCString()
+                });
+            }
+            
+        });
+        
+    } else {
+        
+        //show all plays
+        console.log("no params");
+        var ref = new Firebase("https://iisjreg-playground.firebaseio.com/scores3");
+        var plays = $firebase(ref).$asArray();
+        plays.$loaded().then(function() {
+            console.log(plays.length + " games in play");
+            var numberOfPlays = plays.length;
+            ref.on("child_removed", function(snapshot) {
+                var deletedPost = snapshot.val();
+                console.log("PlayID '" + deletedPost.$id + "' has been deleted");
+                numberOfPlays -= 1;
+            });
+            $scope.numberOfPlays = numberOfPlays;
+            $scope.plays = plays;
+            $scope.addPlay = function() {
+                numberOfPlays += 1;
+                var gameName = $scope.gameName || 'anonymous';
+                var time = new Date();
+                //ADD TO FIREBASE
+                console.log(gameName);
+                console.log(time);
+                $scope.plays.$add({
+                    gameName: gameName,
+                    time: time.toUTCString(),
+                    ISOtime: time.toISOString()
+                });
+            }
+        });
+    }
+});
+app.controller('historyController', function($rootScope, $scope, $firebase) {
+    //history TESTING
+    
+
+    
+    
 });
 app.controller('MainController', function($rootScope, $scope) {
     //ROUTING
