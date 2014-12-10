@@ -1,14 +1,14 @@
 <div content-for="title">
-    <span>Score test #3 - history</span>
+    <span>Game History</span>
 </div>
 
 
 <div class="scrollable">
     <div class="scrollable-content section" ng-controller="ScoreController3">
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <!-- <script type="text/javascript" src="https://www.google.com/jsapi"></script> -->
         <div class="list-group">
             <div class="list-group-item">
-                <h2>Game History<br/><small>{{play.gameName}} on {{play.time}}</small></h2>
+                <h4>{{play.gameName}}<br /> <small><i>(updated on {{play.time}})</i></small></h4>
             </div>
             <div class="list-group-item">
                 TODO: Set up google charts

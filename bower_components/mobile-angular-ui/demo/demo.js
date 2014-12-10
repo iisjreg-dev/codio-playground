@@ -37,7 +37,6 @@ app.config(function($routeProvider, $locationProvider) {
         templateUrl: "score3-play.html"
         //params.playID
     });
-    
     $routeProvider.when('/score3/plays/:playID/history', {
         templateUrl: "score3-history.html"
         //params.playID
@@ -155,21 +154,16 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
     //
     //add score history & plays (instances of a game)
     //
-    //TODO struct: scores3>players>$playerID>$scoreID>score & timestamp ???
-    //
-    //
     //
     var params = $routeParams;
     if(params.playID) {
-        //show play
+        //show individual play
         console.log("params playID = " + params.playID);
         var playRef = new Firebase("https://iisjreg-playground.firebaseio.com/scores3/" + params.playID);
         var play = $firebase(playRef).$asObject();
         play.$bindTo($scope, "play");
-        
         var playerRef = new Firebase("https://iisjreg-playground.firebaseio.com/scores3/" + params.playID + "/players");
         var players = $firebase(playerRef).$asArray();
-        
         players.$loaded().then(function() {
             console.log(players.length + " players in play");
             var numberOfPlayers = players.length;
@@ -178,51 +172,70 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                 console.log("Player '" + deletedPost.playerName + "' has been deleted");
                 numberOfPlayers -= 1;
             });
-            
-            //playerRef.on("value", function(snapshot) {
-            //    var post = snapshot.val();
-            //    console.log(post);
-            //});
-            
             $scope.numberOfPlayers = numberOfPlayers;
             $scope.players = players;
+            
             $scope.addPlayer = function() {
+                var colors = ["blue", "red", "yellow", "green", "orange"];
+                var newColor = $scope.color || colors[Math.floor(Math.random() * colors.length)];
                 numberOfPlayers += 1;
                 var playerName = $scope.playerName || 'anonymous';
-                //ADD TO FIREBASE
                 console.log(playerName);
                 $scope.players.$add({
                     playerName: playerName,
-                    playerScore: 0
+                    playerScore: 0,
+                    history: "",
+                    color: newColor
                 });
                 $scope.playerName = "";
             }
-            $scope.updateScore = function(player, update) {
-                console.log("Player " + player.playerName + ", " + update);
-                var newScore = player.playerScore + update; 
-                player.playerScore = newScore;
+            $scope.changeColor = function(player) {
+                var colors = ["blue", "red", "yellow", "green", "orange"];
+                var newColor = colors[Math.floor(Math.random() * colors.length)];
+                console.log("change color of " + player.playerName + " to " + newColor);
+                player.color = newColor;
                 players.$save(player).then(function() {
-                // data has been saved to Firebase
-                    console.log(" -> updated");
-                });
-                var time = new Date();
-                var playerScoreRef = playerRef.child(player.$id + "/scores");
-                playerScoreRef.push({
-                    score: newScore,
-                    time: time.toUTCString()
+                    // data has been saved to Firebase
+                    console.log(" -> successful");
                 });
             }
-            
+            $scope.updateScore = function(player, update) {
+                //var time = new Date();
+                //console.log("update time");
+                //thisPlay.time = time.toUTCString();
+                //
+                var newScore = player.playerScore + update;
+                console.log("Player " + player.playerName + ", " + update + " = " + newScore);
+                player.playerScore = newScore;
+                var maxHistory = 16;
+                var newHistory = update.toString();
+                if(player.history.length > 0) {
+                    newHistory = newHistory + ", " + player.history;
+                }
+                if(player.history.length >= maxHistory) {
+                    newHistory = newHistory.substr(0, maxHistory).concat("...");
+                }
+                player.history = newHistory;
+                console.log(player.history);
+                players.$save(player).then(function() {
+                    // data has been saved to Firebase
+                    console.log(" -> successful");
+                    var time = new Date();
+                    var playerScoreRef = playerRef.child(player.$id + "/scores");
+                    playerScoreRef.push({
+                        score: newScore,
+                        time: time.toUTCString()
+                    });
+                });
+            }
         });
-        
     } else {
-        
         //show all plays
         console.log("no params");
         var ref = new Firebase("https://iisjreg-playground.firebaseio.com/scores3");
         var plays = $firebase(ref).$asArray();
         plays.$loaded().then(function() {
-            console.log(plays.length + " games in play");
+            console.log(plays.length + " current games");
             var numberOfPlays = plays.length;
             ref.on("child_removed", function(snapshot) {
                 var deletedPost = snapshot.val();
@@ -249,10 +262,6 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
 });
 app.controller('historyController', function($rootScope, $scope, $firebase) {
     //history TESTING
-    
-
-    
-    
 });
 app.controller('MainController', function($rootScope, $scope) {
     //ROUTING
