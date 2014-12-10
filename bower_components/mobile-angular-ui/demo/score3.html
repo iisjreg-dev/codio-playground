@@ -1,5 +1,5 @@
 <div content-for="title">
-    <span>Score test #3</span>
+    <span>Game Select</span>
 </div>
 
 
@@ -7,29 +7,38 @@
     <div class="scrollable-content section" ng-controller="ScoreController3">
 
         <div class="list-group">
-            <div class="list-group-item">
-                <h2>Pointsy<br/><small>Please select a game</small></h2>
-            </div>
-            <div class="list-group-item">
-                <div class="panel panel-success">
-                    <div class="panel-heading">Play new game</div>
-                    <div class="panel-body">
-                        <div class="input-group">
-                            <input type='text' ng-model='gameName' id='gameName' placeholder='Game Name' class="form-control">
-                            <span class="input-group-btn"><button class="btn btn-default" type="button" ng-click="addPlay()">Start</button></span>
-                        </div>
-                    </div>
+            <div class="list-group-item media">
+
+                <div class="pull-right">
+                    <a class="btn btn-default" href="#overlay" toggle="on">New Game</a>
+                </div>
+                <div class="media-body">
+                    <h4>Please select a game</h4>
                 </div>
             </div>
+
             <div class="list-group-item" ng-repeat="play in plays">
                 <a href="#/score3/plays/{{play.$id}}">
                     {{play.gameName}}<br />(<i>{{play.time}}</i>) <i class="fa fa-chevron-right pull-right"></i>
                 </a>
             </div>
         </div>
-
-
-
+        <div overlay="overlay">
+            <div class="list-group-item">
+                <div class="panel panel-success">
+                    <div class="panel-heading">Play new game</div>
+                    <div class="panel-body">
+                        <div class="input-group">
+                            <input type='text' ng-model='gameName' id='gameName' placeholder='Game Name' class="form-control">
+                            <!-- <span class="input-group-btn"><button class="btn btn-default" type="button" ng-click="addPlay()">Start</button></span> -->
+                            <p toggle="off" bubble target="overlay">
+                                <span class="btn btn-primary form-control" ng-click="addPlay()">Add</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div content-for="footerBar">
             <a ng-click="" class="btn btn-navbar"><i class="fa fa-info fa-navbar"></i> test</a>
