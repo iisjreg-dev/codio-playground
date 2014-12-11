@@ -1,3 +1,17 @@
+// function updateScore(player, score) {
+//     clearTimeout(timer);
+//     //console.log(document.getElementById("tempScoreLabel-" + player));
+//     var currentScore = Number(document.getElementById("tempScoreLabel-" + player).innerHTML); 
+//     var newScore = currentScore + score;
+//     document.getElementById("tempScoreLabel-" + player).innerHTML = newScore;
+//     //wait 5 seconds than update hidden field which auto updates ng
+//     var timer = setTimeout(function(){
+//         document.getElementById("tempScore-" + player).value = newScore;
+//         document.getElementById("tempScoreLabel-" + player).innerHTML = "";
+//     },3000);
+// }
+
+
 var app = angular.module('MobileAngularUiExamples', ["ngRoute", "ngTouch", "mobile-angular-ui", "firebase"]);
 app.config(function($routeProvider, $locationProvider) {
     $routeProvider.when('/', {
@@ -155,13 +169,15 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
     //add score history & plays (instances of a game)
     //
     //
+    var timer = [];
     var params = $routeParams;
     if(params.playID) {
         //show individual play
         console.log("params playID = " + params.playID);
         var playRef = new Firebase("https://iisjreg-playground.firebaseio.com/scores3/" + params.playID);
         var play = $firebase(playRef).$asObject();
-        play.$bindTo($scope, "play");
+        //play.$bindTo($scope, "play");
+        $scope.play = play;
         var playerRef = new Firebase("https://iisjreg-playground.firebaseio.com/scores3/" + params.playID + "/players");
         var players = $firebase(playerRef).$asArray();
         players.$loaded().then(function() {
@@ -176,6 +192,12 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
             $scope.players = players;
             
             $scope.addPlayer = function() {
+                var time = new Date();
+                console.log("update time");
+                play.time = time.toUTCString();
+                play.ISOtime = time.toISOString();
+                play.numberOfPlayers += 1;
+                play.$save();
                 var colors = ["blue", "red", "yellow", "green", "orange"];
                 var newColor = $scope.color || colors[Math.floor(Math.random() * colors.length)];
                 numberOfPlayers += 1;
@@ -184,6 +206,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                 $scope.players.$add({
                     playerName: playerName,
                     playerScore: 0,
+                    tempScore: "",
                     history: "",
                     color: newColor
                 });
@@ -200,10 +223,25 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                 });
             }
             $scope.updateScore = function(player, update) {
-                //var time = new Date();
-                //console.log("update time");
-                //thisPlay.time = time.toUTCString();
-                //
+                var playerNum = players.$indexFor(player.$id);
+                clearTimeout(timer[playerNum]); //ONE TIMER PER PLAYER
+                player.tempScore = Number(player.tempScore) + update;
+                wait(playerNum,function(){
+                    finalupdate(player,player.tempScore);
+                    player.tempScore = "";
+                    players.$save(player);
+                },3000);
+            }
+            function wait(ref, func, time){
+                timer[ref] = setTimeout(func, time); //PROBABLY NOT NECESSARY
+            }
+            function finalupdate(player, update) {    
+                var time = new Date();
+                console.log("update time");
+                play.time = time.toUTCString();
+                play.ISOtime = time.toISOString();
+                play.$save();
+                
                 var newScore = player.playerScore + update;
                 console.log("Player " + player.playerName + ", " + update + " = " + newScore);
                 player.playerScore = newScore;
@@ -254,7 +292,8 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                 $scope.plays.$add({
                     gameName: gameName,
                     time: time.toUTCString(),
-                    ISOtime: time.toISOString()
+                    ISOtime: time.toISOString(),
+                    numberOfPlayers: 0
                 });
             }
         });
