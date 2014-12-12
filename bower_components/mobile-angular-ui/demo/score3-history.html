@@ -4,20 +4,15 @@
 
 
 <div class="scrollable">
-    <div class="scrollable-content section" ng-controller="ScoreController3">
-    <!-- <script type="text/javascript" src="https://www.google.com/jsapi"></script> -->
+    <div class="scrollable-content section" ng-controller="historyController">
         <div class="list-group">
             <div class="list-group-item">
                 <h4>{{play.gameName}}<br /> <small><i>(updated on {{play.time}})</i></small></h4>
             </div>
             <div class="list-group-item">
-                TODO: Set up google charts
-                <div class="panel panel-success">
-                    <div class="panel-heading">Scores:</div>
-                    <div class="panel-body" ng-controller="historyController" id="chartdiv">
-                        
-                    </div>
-                </div>
+                
+                    <div google-chart chart="chart" style="{{chart.cssStyle}}"/>
+                    
             </div>
         </div>
 
@@ -27,7 +22,7 @@
         <div content-for="footerBar">
             <a ng-click="" class="btn btn-navbar"><i class="fa fa-info fa-navbar"></i> test</a>
             <a ng-click="" class="btn btn-navbar"><i class="fa fa-circle-o-notch fa-navbar"></i> test</a>
-            <a ng-click="#/score3/{{play.$id}}/history" class="btn btn-navbar"><i class="fa fa-line-chart fa-navbar"></i> History</a>
+            <a ng-click="" class="btn btn-navbar"><i class="fa fa-line-chart fa-navbar"></i> test</a>
 
         </div>
 
