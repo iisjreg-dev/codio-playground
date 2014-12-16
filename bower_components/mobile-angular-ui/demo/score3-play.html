@@ -4,11 +4,10 @@
             <div class="pull-right">
                 <h1 class="text-right">{{player.playerScore}}</h1>
                 <br /><span class="label label-info">{{player.history}}</span>
-
             </div>
             <div class="media-body">
-                <h3 class="media-heading"><span ng-click="changeColor(player)" class="label" style="background-color: {{player.color}};"> 
-                    <i class="fa fa-child fa-navbar"></i> {{player.playerName}}</span> <span id="tempScoreLabel-{{player.$id}}">{{player.tempScore}}</span>
+                <h3 class="media-heading"><small>(p{{player.turnOrder}}) </small><span ng-click="changeColor(player)" class="label" style="background-color: {{player.color}};"> 
+                    <i class="fa fa-child fa-navbar"></i> {{player.playerName}}</span>
                     </h3> 
                 <div class="btn-group">
 
@@ -16,17 +15,19 @@
                     <button id="{{player.$id}}" class="btn btn-default" ng-click="updateScore(player,5)"><i class="fa fa-plus-square-o fa-fw"></i>5</button>
                     <button id="{{player.$id}}" class="btn btn-default" ng-click="updateScore(player,10)"><i class="fa fa-plus-square-o fa-fw"></i>10</button>
                 </div>
+                
+
                 <br />
                 <div class="btn-group">
                     <button id="{{player.$id}}" class="btn btn-default" ng-click="updateScore(player,-1)"><i class="fa fa-minus-square-o fa-fw"></i>1</button>
                     <button id="{{player.$id}}" class="btn btn-default" ng-click="updateScore(player,-5)"><i class="fa fa-minus-square-o fa-fw"></i>5</button>
                     <button id="{{player.$id}}" class="btn btn-default" ng-click="updateScore(player,-10)"><i class="fa fa-minus-square-o fa-fw"></i>10</button>
                 </div>
-                <!-- <i class="fa fa-trash navbar-right" aria-hidden="true" ng-click="players.$remove(player)"></i> -->
+
             </div>
+
         </div>
     </div>
-
 
     <div overlay="overlay">
         <!-- <h4 class="overlay-title">Add new Player</h4>  -->
@@ -41,10 +42,7 @@
 
                             <input type='text' ng-model='playerName' id='playerName' placeholder='Player Name' class="form-control">
                             <input label="Player Colour" type="color" id="color" ng-model='color' class="form-control">
-                            <!-- <button class="btn btn-default form-control" type="button" ng-click="addPlayer()">Add</button> -->
-
                             <a class="btn btn-primary form-control" ng-click="addPlayer()" toggle="off" bubble target="overlay">Add</a>
-
                         </div>
                     </div>
                 </form>
@@ -52,15 +50,16 @@
         </div>
 
     </div>
-    
+
     <div content-for="title">
         <span>{{play.gameName}}</span>
     </div>
 
     <div content-for="footerBar">
 
-        <a ng-click="" class="btn btn-navbar"><i class="fa fa-ellipsis-h"></i></a>
+        <a class="btn btn-navbar" onClick="history.go(-1)"><i class="fa fa-ellipsis-h"></i></a>
         <a ng-click="predicate = '-playerScore'" class="btn btn-navbar"><i class="fa fa-sort-amount-desc"></i></a>
+        <a ng-click="predicate = 'turnOrder'" class="btn btn-navbar"><i class="fa fa-sort-numeric-asc"></i></a>
         <a ng-click="predicate = 'playerName'" class="btn btn-navbar"><i class="fa fa-sort-alpha-asc"></i></a>
         <a ng-click="" class="btn btn-navbar"><i class="fa fa-info fa-navbar"></i></a>
         <a href="#/score3/plays/history/{{play.$id}}" class="btn btn-navbar"><i class="fa fa-line-chart fa-navbar"></i></a>

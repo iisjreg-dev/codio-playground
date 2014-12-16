@@ -45,8 +45,15 @@ app.config(function($routeProvider, $locationProvider) {
     $routeProvider.when('/score3', {
         templateUrl: "score3.html"
     });
+    $routeProvider.when('/score4', {
+        templateUrl: "score4.html"
+    });
     $routeProvider.when('/score3/plays/:playID', {
         templateUrl: "score3-play.html"
+        //params.playID
+    });
+    $routeProvider.when('/score4/plays/:playID', {
+        templateUrl: "score4-play.html"
         //params.playID
     });
     $routeProvider.when('/score3/plays/history/:playID', {
@@ -204,6 +211,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                 $scope.players.$add({
                     playerName: playerName,
                     playerScore: 0,
+                    turnOrder: 0,
                     tempScore: "",
                     history: "",
                     color: newColor
@@ -219,6 +227,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                     // data has been saved to Firebase
                     console.log(" -> successful");
                 });
+                
             }
             $scope.updateScore = function(player, update) {
                 var playerNum = players.$indexFor(player.$id);
@@ -241,7 +250,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                 play.time = time.toUTCString();
                 play.ISOtime = time.toISOString();
                 play.$save();
-                var newScore = player.playerScore + update;
+                var newScore = player.playerScore + Number(update);
                 console.log("Player " + player.playerName + ", " + update + " = " + newScore);
                 player.playerScore = newScore;
                 var maxHistory = 16;
@@ -326,13 +335,12 @@ app.controller('historyController', function($rootScope, $scope, $firebase, $rou
             var chart1 = {};
             chart1.type = "LineChart";
             chart1.cssStyle = "width:100%";
+            //
+            //
+            //
             //TODO convert data!
             //
             //
-            //
-            //
-            //
-            //console.log(players);
             //
             //
             var testdata = new google.visualization.DataTable();
@@ -347,17 +355,38 @@ app.controller('historyController', function($rootScope, $scope, $firebase, $rou
             //if(players[x].playerName) {
             //console.log(x + "/ " + players[x].playerName);
             //Add data.
+            //
+            //test:
+            var data1a = new Date("Thu, 11 Dec 2014 21:49:18 GMT").toTimeString();
+            var data2a = new Date("Thu, 11 Dec 2014 22:00:18 GMT").toTimeString();
+            var data3a = new Date("Thu, 11 Dec 2014 22:05:18 GMT").toTimeString();
+            var data4a = new Date("Thu, 11 Dec 2014 22:49:18 GMT").toTimeString();
+            var data5a = new Date("Thu, 11 Dec 2014 23:50:18 GMT").toTimeString();
+            var data6a = new Date("Thu, 11 Dec 2014 23:55:18 GMT").toTimeString();
+            var data7a = new Date("Thu, 11 Dec 2014 23:55:18 GMT").toTimeString();
+            var data8a = new Date("Fri, 12 Dec 2014 00:10:18 GMT").toTimeString();
+            
+            //var data1b = data1a.getHours().toString() + ":" + data1a.getMinutes().toString();
+            //var data2b = data2a.getHours().toString() + ":" + data2a.getMinutes().toString();
+            //var data3b = data3a.getHours().toString() + ":" + data3a.getMinutes().toString();
+            //var data4b = data4a.getHours().toString() + ":" + data4a.getMinutes().toString();
+            //var data5b = data5a.getHours().toString() + ":" + data5a.getMinutes().toString();
+            //var data6b = data6a.getHours().toString() + ":" + data6a.getMinutes().toString();
+            //var data7b = data7a.getHours().toString() + ":" + data7a.getMinutes().toString();
+            
+            
             testdata.addRows([
-                [new Date(2007, 5, 1).toString(), 2, 4],
-                [new Date(2006, 7, 16).toString(), 3, 5],
-                [new Date(2007, 11, 28).toString(), 5, 1],
-                [new Date(2005, 3, 13).toString(), 10, null],
-                [new Date(2005, 3, 13).toString(), 11, 2],
-                [new Date(2005, 3, 13).toString(), 1, 6],
-                [new Date(2011, 6, 1).toString(), 6, 5]
+                [data1a.substr(0,5), 2, 4],
+                [data2a.substr(0,5), 3, 5],
+                [data3a.substr(0,5), 5, 1],
+                [data4a.substr(0,5), 10, 1],
+                [data5a.substr(0,5), 11, 1],
+                [data6a.substr(0,5), 1, 6],
+                [data7a.substr(0,5), 6, 5],
+                [data8a.substr(0,5), 6, 5]
             ]);
             //
-            //row per 'time-slot' - KeepScore uses 5 minute slots
+            //row per 'time-slot' - e.g. KeepScore uses 5 minute slots
             //
             //
             //scores[x].playerScore = 0;
@@ -381,7 +410,7 @@ app.controller('historyController', function($rootScope, $scope, $firebase, $rou
                 },
                 "displayExactValues": true,
                 "hAxis": {
-                    "title": "Time"
+                    "title": "TEST DATA ONLY"
                 },
                 "domainAxis": {
                     "type": "category"

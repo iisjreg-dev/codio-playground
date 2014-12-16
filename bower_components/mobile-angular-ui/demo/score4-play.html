@@ -1,0 +1,76 @@
+<div class="scrollable" ng-controller="ScoreController3">
+    <div class="scrollable-content section">
+        <div class="list-group-item media container" ng-repeat="player in players | orderBy:predicate:reverse">
+            <!-- new layout: minus | score (name below) | plus -->
+            <div class="row">
+                <div class="col-xs-3 col-sm-3 col-md-3">
+                    <div class="btn-group toggleable-dropdown" active-class="open" id="myDropdown-{{player.$id}}" toggleable>
+                <div class="dropdown-menu text-center" role="menu" toggle="off" bubble target="myDropdown-{{player.$id}}">
+                        <button id="{{player.$id}}" class="btn btn-default" ng-click="updateScore(player,-1)"><i class="fa fa-minus-square-o fa-fw"></i>1</button>
+                        <button id="{{player.$id}}" class="btn btn-default" ng-click="updateScore(player,-5)"><i class="fa fa-minus-square-o fa-fw"></i>5</button>
+                </div>
+            </div>
+                    <button type="button" class="btn btn-default dropdown-toggle" toggle target="myDropdown-{{player.$id}}"><span class="caret"></span>
+                    </button>
+                </div>
+                
+                <div class="col-xs-6 col-sm-6 col-md-6 text-center">
+                    <h1>{{player.playerScore}}</h1>
+                    <span ng-click="changeColor(player)" class="label" style="background-color: {{player.color}};"><i class="fa fa-child fa-navbar"></i> {{player.playerName}}</span>
+                    <span class="label label-info">{{player.history}}</span>
+                </div>
+                
+                <div class="col-xs-3 col-sm-3 col-md-3 text-right">
+                    <div class="btn-group toggleable-dropdown" active-class="open" id="myDropdown+{{player.$id}}" toggleable>
+                <div class="dropdown-menu text-center" role="menu" toggle="off" bubble target="myDropdown+{{player.$id}}">
+                        <button id="{{player.$id}}" class="btn btn-default" ng-click="updateScore(player,1)"><i class="fa fa-plus-square-o fa-fw"></i>1</button>
+                        <button id="{{player.$id}}" class="btn btn-default" ng-click="updateScore(player,5)"><i class="fa fa-plus-square-o fa-fw"></i>5</button>
+                </div>
+            </div>
+                    <button type="button" class="btn btn-default dropdown-toggle" toggle target="myDropdown+{{player.$id}}"><span class="caret"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div overlay="overlay">
+        <!-- <h4 class="overlay-title">Add new Player</h4>  -->
+        <div class="panel panel-success">
+            <div class="panel-heading">Add new player</div>
+            <div class="panel-body">
+                <form class="form-inline" role="form">
+
+                    <div class="form-group">
+
+                        <div class="input-group">
+
+                            <input type='text' ng-model='playerName' id='playerName' placeholder='Player Name' class="form-control">
+                            <input label="Player Colour" type="color" id="color" ng-model='color' class="form-control">
+                            <a class="btn btn-primary form-control" ng-click="addPlayer()" toggle="off" bubble target="overlay">Add</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <div content-for="title">
+        <span>{{play.gameName}}</span>
+    </div>
+
+    <div content-for="footerBar">
+
+        <a class="btn btn-navbar" onClick="history.go(-1)"><i class="fa fa-ellipsis-h"></i></a>
+        <a ng-click="predicate = '-playerScore'" class="btn btn-navbar"><i class="fa fa-sort-amount-desc"></i></a>
+        <a ng-click="predicate = 'turnOrder'" class="btn btn-navbar"><i class="fa fa-sort-numeric-asc"></i></a>
+        <a ng-click="predicate = 'playerName'" class="btn btn-navbar"><i class="fa fa-sort-alpha-asc"></i></a>
+        <a ng-click="" class="btn btn-navbar"><i class="fa fa-info fa-navbar"></i></a>
+        <a href="#/score3/plays/history/{{play.$id}}" class="btn btn-navbar"><i class="fa fa-line-chart fa-navbar"></i></a>
+        <a href="#overlay" toggle="on" class="btn btn-navbar"><i class="fa fa-plus fa-navbar"></i><i class="fa fa-user fa-navbar"></i></a>
+
+    </div>
+
+
+</div>

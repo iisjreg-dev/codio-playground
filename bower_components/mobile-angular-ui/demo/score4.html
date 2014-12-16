@@ -1,0 +1,53 @@
+<div content-for="title">
+    <span>Game Select</span>
+</div>
+
+
+<div class="scrollable">
+    <div class="scrollable-content section" ng-controller="ScoreController3">
+
+        <div class="list-group">
+            <div class="list-group-item media">
+                <div class="pull-right">
+                    <a class="btn btn-default" href="#overlay" toggle="on">New Game</a>
+                </div>
+                <div class="media-body">
+                    <h4>Please select a game</h4>
+                </div>
+            </div>
+            <div class="list-group-item" ng-repeat="play in plays">
+                <a href="#/score4/plays/{{play.$id}}">
+                    {{play.gameName}}<br />(<i>{{play.time}}</i>)
+                    <div class="pull-right">
+                        <i class="fa fa-users"></i> x{{play.numberOfPlayers}} <i class="fa fa-chevron-right"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div overlay="overlay">
+            <div class="list-group-item">
+                <div class="panel panel-success">
+                    <div class="panel-heading">Play new game</div>
+                    <div class="panel-body">
+                        <div class="input-group">
+                            <input type='text' ng-model='gameName' id='gameName' placeholder='Game Name' class="form-control">
+                            <!-- <span class="input-group-btn"><button class="btn btn-default" type="button" ng-click="addPlay()">Start</button></span> -->
+
+                            <span class="btn btn-primary form-control" ng-click="addPlay()" toggle="off" bubble target="overlay">Add</span>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div content-for="footerBar">
+            <a ng-click="" class="btn btn-navbar"><i class="fa fa-info fa-navbar"></i> test</a>
+            <a ng-click="" class="btn btn-navbar"><i class="fa fa-circle-o-notch fa-navbar"></i> test</a>
+            <a ng-click="" class="btn btn-navbar"><i class="fa fa-child fa-navbar"></i> test</a>
+
+        </div>
+
+
+    </div>
+</div>
