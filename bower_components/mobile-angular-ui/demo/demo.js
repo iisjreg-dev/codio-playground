@@ -181,7 +181,6 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
         console.log("params playID = " + params.playID);
         var playRef = new Firebase("https://iisjreg-playground.firebaseio.com/scores3/" + params.playID);
         var play = $firebase(playRef).$asObject();
-        //play.$bindTo($scope, "play");
         $scope.play = play;
         var playerRef = new Firebase("https://iisjreg-playground.firebaseio.com/scores3/" + params.playID + "/players");
         var players = $firebase(playerRef).$asArray();
@@ -196,6 +195,9 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
             $scope.predicate = "-playerScore";
             $scope.numberOfPlayers = numberOfPlayers;
             $scope.players = players;
+            //
+            //functions
+            //
             $scope.addPlayer = function() {
                 var time = new Date();
                 console.log("update time");
@@ -227,7 +229,6 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                     // data has been saved to Firebase
                     console.log(" -> successful");
                 });
-                
             }
             $scope.updateScore = function(player, update) {
                 var playerNum = players.$indexFor(player.$id);
@@ -239,12 +240,13 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                     players.$save(player);
                 }, 3000);
             }
-
+            
             function wait(ref, func, time) {
                 timer[ref] = setTimeout(func, time); //PROBABLY NOT NECESSARY
             }
 
             function finalupdate(player, update) {
+                $rootScope.toggle('overlay-' + player.$id, 'off');
                 var time = new Date();
                 console.log("update time");
                 play.time = time.toUTCString();
@@ -365,7 +367,6 @@ app.controller('historyController', function($rootScope, $scope, $firebase, $rou
             var data6a = new Date("Thu, 11 Dec 2014 23:55:18 GMT").toTimeString();
             var data7a = new Date("Thu, 11 Dec 2014 23:55:18 GMT").toTimeString();
             var data8a = new Date("Fri, 12 Dec 2014 00:10:18 GMT").toTimeString();
-            
             //var data1b = data1a.getHours().toString() + ":" + data1a.getMinutes().toString();
             //var data2b = data2a.getHours().toString() + ":" + data2a.getMinutes().toString();
             //var data3b = data3a.getHours().toString() + ":" + data3a.getMinutes().toString();
@@ -373,17 +374,15 @@ app.controller('historyController', function($rootScope, $scope, $firebase, $rou
             //var data5b = data5a.getHours().toString() + ":" + data5a.getMinutes().toString();
             //var data6b = data6a.getHours().toString() + ":" + data6a.getMinutes().toString();
             //var data7b = data7a.getHours().toString() + ":" + data7a.getMinutes().toString();
-            
-            
             testdata.addRows([
-                [data1a.substr(0,5), 2, 4],
-                [data2a.substr(0,5), 3, 5],
-                [data3a.substr(0,5), 5, 1],
-                [data4a.substr(0,5), 10, 1],
-                [data5a.substr(0,5), 11, 1],
-                [data6a.substr(0,5), 1, 6],
-                [data7a.substr(0,5), 6, 5],
-                [data8a.substr(0,5), 6, 5]
+                [data1a.substr(0, 5), 2, 4],
+                [data2a.substr(0, 5), 3, 5],
+                [data3a.substr(0, 5), 5, 1],
+                [data4a.substr(0, 5), 10, 1],
+                [data5a.substr(0, 5), 11, 1],
+                [data6a.substr(0, 5), 1, 6],
+                [data7a.substr(0, 5), 6, 5],
+                [data8a.substr(0, 5), 6, 5]
             ]);
             //
             //row per 'time-slot' - e.g. KeepScore uses 5 minute slots
@@ -399,10 +398,7 @@ app.controller('historyController', function($rootScope, $scope, $firebase, $rou
             //}
             //data.addRows
             //
-                       
-            
-            chart1.data = testdata; 
-            
+            chart1.data = testdata;
             chart1.options = {
                 "legend": {
                     "position": "top",

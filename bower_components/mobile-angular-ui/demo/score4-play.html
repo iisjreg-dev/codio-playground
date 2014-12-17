@@ -4,33 +4,74 @@
             <!-- new layout: minus | score (name below) | plus -->
             <div class="row">
                 <div class="col-xs-3 col-sm-3 col-md-3">
-                    <div class="btn-group toggleable-dropdown" active-class="open" id="myDropdown-{{player.$id}}" toggleable>
-                <div class="dropdown-menu text-center" role="menu" toggle="off" bubble target="myDropdown-{{player.$id}}">
-                        <button id="{{player.$id}}" class="btn btn-default" ng-click="updateScore(player,-1)"><i class="fa fa-minus-square-o fa-fw"></i>1</button>
-                        <button id="{{player.$id}}" class="btn btn-default" ng-click="updateScore(player,-5)"><i class="fa fa-minus-square-o fa-fw"></i>5</button>
+                    <div class="btn-group-vertical" role="group">
+                        <button type="button" class="btn btn-danger" ng-click="updateScore(player,-1)"><i class="fa fa-minus-square fa-fw"></i>1</button>
+                        <button type="button" class="btn btn-danger" href="#overlay-{{player.$id}}" toggle="on"><span class="caret"></span>
+                        </button>
+                    </div>
                 </div>
-            </div>
-                    <button type="button" class="btn btn-default dropdown-toggle" toggle target="myDropdown-{{player.$id}}"><span class="caret"></span>
-                    </button>
-                </div>
-                
+
                 <div class="col-xs-6 col-sm-6 col-md-6 text-center">
-                    <h1>{{player.playerScore}}</h1>
-                    <span ng-click="changeColor(player)" class="label" style="background-color: {{player.color}};"><i class="fa fa-child fa-navbar"></i> {{player.playerName}}</span>
-                    <span class="label label-info">{{player.history}}</span>
+                    <div class="btn-group-vertical" role="group">
+                        <button type="button" class="btn btn-default" disabled="disabled">
+                            <h1>{{player.playerScore}} <sup><i class="badge">{{player.tempScore}}</i></sup></h1>
+                        </button>
+                        <button type="button" class="btn btn-default label text-capitalize" style="background-color: {{player.color}};" ng-click="changeColor(player)">
+                            <h4><i class="fa fa-child fa-navbar"></i> {{player.playerName}}</h4></button>
+                        <button type="button" class="btn btn-default btn-xs" disabled="disabled">{{player.history}}</button>
+
+                    </div>
                 </div>
-                
                 <div class="col-xs-3 col-sm-3 col-md-3 text-right">
-                    <div class="btn-group toggleable-dropdown" active-class="open" id="myDropdown+{{player.$id}}" toggleable>
-                <div class="dropdown-menu text-center" role="menu" toggle="off" bubble target="myDropdown+{{player.$id}}">
-                        <button id="{{player.$id}}" class="btn btn-default" ng-click="updateScore(player,1)"><i class="fa fa-plus-square-o fa-fw"></i>1</button>
-                        <button id="{{player.$id}}" class="btn btn-default" ng-click="updateScore(player,5)"><i class="fa fa-plus-square-o fa-fw"></i>5</button>
+                    <div class="btn-group-vertical" role="group">
+                        <button type="button" class="btn btn-success" ng-click="updateScore(player,1)"><i class="fa fa-plus-square fa-fw"></i>1</button>
+                        <button type="button" class="btn btn-success" href="#overlay-{{player.$id}}" toggle="on"><span class="caret"></span>
+                        </button>
+                    </div>
+
+
                 </div>
             </div>
-                    <button type="button" class="btn btn-default dropdown-toggle" toggle target="myDropdown+{{player.$id}}"><span class="caret"></span>
-                    </button>
+
+            <div overlay="overlay-{{player.$id}}">
+                <h4 class="overlay-title text-capitalize">Add Score for {{player.playerName}}</h4>
+                <p>
+                    <button type="button" class="btn btn-default" disabled="disabled">&nbsp;{{player.tempScore}}&nbsp;</button>
+                </p>
+                <div class="btn-group">
+
+                    <button class="btn btn-default" ng-click="updateScore(player,1)"><i class="fa fa-plus-square-o fa-fw"></i>1</button>
+                    <button class="btn btn-default" ng-click="updateScore(player,5)"><i class="fa fa-plus-square-o fa-fw"></i>5</button>
+                    <button class="btn btn-default" ng-click="updateScore(player,10)"><i class="fa fa-plus-square-o fa-fw"></i>10</button>
                 </div>
+                <br />
+                <div class="btn-group">
+                    <button class="btn btn-default" ng-click="updateScore(player,50)"><i class="fa fa-plus-square-o fa-fw"></i>50</button>
+                    <button class="btn btn-default" ng-click="updateScore(player,100)"><i class="fa fa-plus-square-o fa-fw"></i>100</button>
+                    <button class="btn btn-default" ng-click="updateScore(player,500)"><i class="fa fa-plus-square-o fa-fw"></i>500</button>
+                </div>
+                <p>
+                    <div class="btn-group">
+                        <button class="btn btn-default" ng-click="updateScore(player,-1)"><i class="fa fa-minus-square-o fa-fw"></i>1</button>
+                        <button class="btn btn-default" ng-click="updateScore(player,-5)"><i class="fa fa-minus-square-o fa-fw"></i>5</button>
+                        <button class="btn btn-default" ng-click="updateScore(player,-10)"><i class="fa fa-minus-square-o fa-fw"></i>10</button>
+                    </div>
+                    <br />
+                    <div class="btn-group">
+                        <button class="btn btn-default" ng-click="updateScore(player,-50)"><i class="fa fa-minus-square-o fa-fw"></i>50</button>
+                        <button class="btn btn-default" ng-click="updateScore(player,-100)"><i class="fa fa-minus-square-o fa-fw"></i>100</button>
+                        <button class="btn btn-default" ng-click="updateScore(player,-500)"><i class="fa fa-minus-square-o fa-fw"></i>500</button>
+                    </div>
+                </p>
+                <!-- <p>
+                    <div class="input-group">
+                        <input type='text' class="form-control" ng-model='manualScore' id='manualScore' placeholder='Score'>
+                        <span class="input-group-btn"><button class="btn btn-default" ng-click="updateManualScore(player)" toggle="off" bubble target="overlay">Add</button></span>
+                    </div>
+                </p> -->
+
             </div>
+            <!-- end of player repeat -->
         </div>
     </div>
 
