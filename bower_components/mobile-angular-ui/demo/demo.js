@@ -1,15 +1,3 @@
-// function updateScore(player, score) {
-//     clearTimeout(timer);
-//     //console.log(document.getElementById("tempScoreLabel-" + player));
-//     var currentScore = Number(document.getElementById("tempScoreLabel-" + player).innerHTML); 
-//     var newScore = currentScore + score;
-//     document.getElementById("tempScoreLabel-" + player).innerHTML = newScore;
-//     //wait 5 seconds than update hidden field which auto updates ng
-//     var timer = setTimeout(function(){
-//         document.getElementById("tempScore-" + player).value = newScore;
-//         document.getElementById("tempScoreLabel-" + player).innerHTML = "";
-//     },3000);
-// }
 var app = angular.module('MobileAngularUiExamples', ["ngRoute", "ngTouch", "mobile-angular-ui", "firebase", "googlechart"]);
 app.config(function($routeProvider, $locationProvider) {
     $routeProvider.when('/', {
@@ -211,7 +199,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                 var playerName = $scope.playerName || 'anonymous';
                 console.log(playerName);
                 $scope.players.$add({
-                    playerName: playerName,
+                    playerName: playerName.substr(0,13),
                     playerScore: 0,
                     turnOrder: 0,
                     tempScore: "",

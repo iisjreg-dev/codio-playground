@@ -5,31 +5,29 @@
             <div class="row">
                 <div class="col-xs-3 col-sm-3 col-md-3">
                     <div class="btn-group-vertical" role="group">
-                        <button type="button" class="btn btn-danger" ng-click="updateScore(player,-1)"><i class="fa fa-minus-square fa-fw"></i>1</button>
-                        <button type="button" class="btn btn-danger" href="#overlay-{{player.$id}}" toggle="on"><span class="caret"></span>
+                        <button type="button" class="btn btn-default" ng-click="updateScore(player,-1)"><i class="fa fa-minus-square fa-fw"></i>1</button>
+                        <button type="button" class="btn btn-default" ng-click="updateScore(player,-5)"><i class="fa fa-minus-square fa-fw"></i>5</button>
+                        <button type="button" class="btn btn-default" href="#overlay-{{player.$id}}" toggle="on"><span class="caret"></span>
                         </button>
                     </div>
                 </div>
-
                 <div class="col-xs-6 col-sm-6 col-md-6 text-center">
                     <div class="btn-group-vertical" role="group">
+                        <button type="button" class="btn btn-default" disabled="disabled" style="background-color: {{player.color}}; color: white;"><i class="fa fa-child fa-navbar"></i><strong class="text-capitalize"> {{player.playerName}}</strong></button>
                         <button type="button" class="btn btn-default" disabled="disabled">
-                            <h1>{{player.playerScore}} <sup><i class="badge">{{player.tempScore}}</i></sup></h1>
+                            <h2>{{player.playerScore}} <sup><i class="badge">{{player.tempScore}}</i></sup></h2>
                         </button>
-                        <button type="button" class="btn btn-default label text-capitalize" style="background-color: {{player.color}};" ng-click="changeColor(player)">
-                            <h4><i class="fa fa-child fa-navbar"></i> {{player.playerName}}</h4></button>
                         <button type="button" class="btn btn-default btn-xs" disabled="disabled">{{player.history}}</button>
 
                     </div>
                 </div>
                 <div class="col-xs-3 col-sm-3 col-md-3 text-right">
                     <div class="btn-group-vertical" role="group">
-                        <button type="button" class="btn btn-success" ng-click="updateScore(player,1)"><i class="fa fa-plus-square fa-fw"></i>1</button>
-                        <button type="button" class="btn btn-success" href="#overlay-{{player.$id}}" toggle="on"><span class="caret"></span>
+                        <button type="button" class="btn btn-default" ng-click="updateScore(player,1)"><i class="fa fa-plus-square fa-fw"></i>1</button>
+                        <button type="button" class="btn btn-default" ng-click="updateScore(player,5)"><i class="fa fa-plus-square fa-fw"></i>5</button>
+                        <button type="button" class="btn btn-default" href="#overlay-{{player.$id}}" toggle="on"><span class="caret"></span>
                         </button>
                     </div>
-
-
                 </div>
             </div>
 
@@ -63,30 +61,19 @@
                         <button class="btn btn-default" ng-click="updateScore(player,-500)"><i class="fa fa-minus-square-o fa-fw"></i>500</button>
                     </div>
                 </p>
-                <!-- <p>
-                    <div class="input-group">
-                        <input type='text' class="form-control" ng-model='manualScore' id='manualScore' placeholder='Score'>
-                        <span class="input-group-btn"><button class="btn btn-default" ng-click="updateManualScore(player)" toggle="off" bubble target="overlay">Add</button></span>
-                    </div>
-                </p> -->
-
             </div>
             <!-- end of player repeat -->
         </div>
     </div>
 
     <div overlay="overlay">
-        <!-- <h4 class="overlay-title">Add new Player</h4>  -->
         <div class="panel panel-success">
             <div class="panel-heading">Add new player</div>
             <div class="panel-body">
                 <form class="form-inline" role="form">
-
                     <div class="form-group">
-
                         <div class="input-group">
-
-                            <input type='text' ng-model='playerName' id='playerName' placeholder='Player Name' class="form-control">
+                            <input type='text' ng-model='playerName' id='playerName' placeholder='Player Name' class="form-control" maxlength=13>
                             <input label="Player Colour" type="color" id="color" ng-model='color' class="form-control">
                             <a class="btn btn-primary form-control" ng-click="addPlayer()" toggle="off" bubble target="overlay">Add</a>
                         </div>
@@ -94,7 +81,15 @@
                 </form>
             </div>
         </div>
+    </div>
 
+    <div overlay="overlay-info">
+        <div class="panel panel-success">
+            <div class="panel-heading">Game info</div>
+            <div class="panel-body">
+                    TODO: game info: BGG game details, picture, player colours, etc.
+            </div>
+        </div>
     </div>
 
     <div content-for="title">
@@ -102,15 +97,13 @@
     </div>
 
     <div content-for="footerBar">
-
         <a class="btn btn-navbar" onClick="history.go(-1)"><i class="fa fa-ellipsis-h"></i></a>
         <a ng-click="predicate = '-playerScore'" class="btn btn-navbar"><i class="fa fa-sort-amount-desc"></i></a>
         <a ng-click="predicate = 'turnOrder'" class="btn btn-navbar"><i class="fa fa-sort-numeric-asc"></i></a>
         <a ng-click="predicate = 'playerName'" class="btn btn-navbar"><i class="fa fa-sort-alpha-asc"></i></a>
-        <a ng-click="" class="btn btn-navbar"><i class="fa fa-info fa-navbar"></i></a>
+        <a href="#overlay-info" toggle="on" class="btn btn-navbar"><i class="fa fa-info fa-navbar"></i></a>
         <a href="#/score3/plays/history/{{play.$id}}" class="btn btn-navbar"><i class="fa fa-line-chart fa-navbar"></i></a>
         <a href="#overlay" toggle="on" class="btn btn-navbar"><i class="fa fa-plus fa-navbar"></i><i class="fa fa-user fa-navbar"></i></a>
-
     </div>
 
 
