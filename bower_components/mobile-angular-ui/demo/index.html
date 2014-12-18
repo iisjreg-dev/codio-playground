@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <base href="/bower_components/mobile-angular-ui/demo/" />
-    <title>Mobile Angular UI Examples</title>
+    <title>Pointsy</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimal-ui" />
@@ -36,31 +36,35 @@
 
       <div class="navbar navbar-app navbar-absolute-top">
         <div class="navbar-brand navbar-brand-center" yield-to="title">
-          <span>Mobile Angular UI</span>
+          <span>Pointsy score keeping</span>
         </div>
         <div class="btn-group pull-left">
           <div ng-click="toggle('mainSidebar')" class="btn btn-navbar sidebar-toggle">
-            <i class="fa fa-bars"></i> Menu
+            <i class="fa fa-bars"></i>
           </div>
         </div>
         <div class="btn-group pull-right" yield-to="navbarAction">
           <div ng-click="toggle('rightSidebar')" class="btn btn-navbar">
-            <i class="fa fa-comment"></i> Chat
+            <i class="fa fa-users"></i>
           </div>
         </div>
       </div>
       <div class="navbar navbar-app navbar-absolute-bottom">
         <div class="btn-group justified" yield-to="footerBar">
-          <a href="" class="btn btn-navbar"><i class="fa fa-home fa-navbar"></i> Docs</a>
-          <a href="" class="btn btn-navbar"><i class="fa fa-github fa-navbar"></i> Sources</a>
-          <a href="" class="btn btn-navbar"><i class="fa fa-exclamation-circle fa-navbar"></i> Issues</a>
+          <a class="btn btn-navbar" onClick="history.go(-1)"><i class="fa fa-ellipsis-h"></i></a>
+            <a ng-click="" class="btn btn-navbar"><i class="fa fa-circle-o-notch"></i></a>
+            <a ng-click="" class="btn btn-navbar"><i class="fa fa-circle-o-notch"></i></a>
+            <a ng-click="" class="btn btn-navbar"><i class="fa fa-circle-o-notch"></i></a>
+            <a ng-click="" class="btn btn-navbar"><i class="fa fa-circle-o-notch"></i></a>
+            <a ng-click="" class="btn btn-navbar"><i class="fa fa-circle-o-notch"></i></a>
+            <a ng-click="" class="btn btn-navbar"><i class="fa fa-circle-o-notch"></i></a>
         </div>
       </div>
 
       <!-- App Body -->
       <div class="app-body" ng-class="{loading: loading}">
         <div ng-show="loading" class="app-content-loading">
-          <i class="fa fa-spinner fa-spin loading-spinner"></i>
+          <i class="fa fa-child fa-spin loading-spinner"></i>
         </div>
 
         <ng-view class="app-content" ng-hide="loading"></ng-view>

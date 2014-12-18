@@ -90,24 +90,6 @@ app.controller('ChatController', function($rootScope, $scope, $firebase) {
 app.controller('UserController', function($rootScope, $scope, $firebase, $location, Auth) {
     //USER TESTING
     //CREATE A FIREBASE REFERENCE
-    $scope.form = {};
-    $scope.auth = Auth;
-    $scope.user = $scope.auth.$getAuth();
-    $scope.login = function() {
-        console.log("login");
-        $scope.auth.$authWithPassword({
-            email: $scope.form.email,
-            password: $scope.form.password
-        }).then(function(authData) {
-            console.log("Logged in as:", authData.uid);
-            $location.path('/user');
-        }).catch(function(error) {
-            console.error("Authentication failed:", error);
-        });
-    }
-    $scope.logout = function() {
-        $scope.auth.$unAuth();
-    }
 });
 app.controller('ScoreController', function($rootScope, $scope, $firebase) {
     //SCORE TESTING
@@ -439,7 +421,7 @@ app.controller('historyController', function($rootScope, $scope, $firebase, $rou
         console.log("no params");
     }
 });
-app.controller('MainController', function($rootScope, $scope) {
+app.controller('MainController', function($rootScope, $scope, $firebase, $window, Auth) {
     //ROUTING
     $rootScope.$on("$routeChangeStart", function() {
         $rootScope.loading = true;
@@ -447,6 +429,54 @@ app.controller('MainController', function($rootScope, $scope) {
     $rootScope.$on("$routeChangeSuccess", function() {
         $rootScope.loading = false;
     });
+    //AUTH
+    $scope.form = {};
+    $scope.auth = Auth;
+    $scope.user = $scope.auth.$getAuth();
+    $scope.login = function() {
+        console.log("login");
+        $scope.auth.$authWithPassword({
+            email: $scope.form.email,
+            password: $scope.form.password
+        }).then(function(authData) {
+            console.log("Logged in as:", authData.uid);
+            //$location.path(absUrl);
+            $window.location.reload();
+        }).
+        catch(function(error) {
+            console.error("Authentication failed:", error);
+        });
+    }
+    $scope.logout = function() {
+        console.log("login");
+        $scope.auth.$unauth();
+        $window.location.reload();
+    }
+    $scope.newAccount = function() {
+        var isNewUser = true;
+        console.log("new account");
+        $scope.auth.$createUser($scope.form.newEmail, $scope.form.newPassword).then(function() {
+            console.log("User created successfully!");
+            var usersRef = new Firebase("https://iisjreg-playground.firebaseio.com");
+            usersRef.onAuth(function(authData) {
+                if(authData && isNewUser) {
+                    // save the user's profile into Firebase so we can list users,
+                    // use them in Security and Firebase Rules, and show profiles
+                    usersRef.child("users").child(authData.uid).set(authData);
+                }
+            });
+            return $scope.auth.$authWithPassword({
+                email: $scope.form.newEmail,
+                password: $scope.form.newPassword
+            });
+        }).then(function(authData) {
+            console.log("Logged in as:", authData.uid);
+            $window.location.reload();
+        }).
+        catch(function(error) {
+            console.error("Error: ", error);
+        });
+    }
     //OTHER DEMO STUFF THAT CAN EVELUATUALLY GO
     var scrollItems = [];
     for(var i = 1; i <= 100; i++) {

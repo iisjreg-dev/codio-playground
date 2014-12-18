@@ -1,68 +1,87 @@
 <div class="scrollable" ng-controller="ScoreController3">
     <div class="scrollable-content section">
-        <div class="list-group-item media container" ng-repeat="player in players | orderBy:predicate:reverse">
-            <!-- new layout: minus | score (name below) | plus -->
-            <div class="row">
-                <div class="col-xs-3 col-sm-3 col-md-3">
-                    <div class="btn-group-vertical" role="group">
-                        <button type="button" class="btn btn-default" ng-click="updateScore(player,-1)"><i class="fa fa-minus-square fa-fw"></i>1</button>
-                        <button type="button" class="btn btn-default" ng-click="updateScore(player,-5)"><i class="fa fa-minus-square fa-fw"></i>5</button>
-                        <button type="button" class="btn btn-default" href="#overlay-{{player.$id}}" toggle="on"><span class="caret"></span>
-                        </button>
-                    </div>
-                </div>
-                <div class="col-xs-6 col-sm-6 col-md-6 text-center">
-                    <div class="btn-group-vertical" role="group">
-                        <button type="button" class="btn btn-default" disabled="disabled" style="background-color: {{player.color}}; color: white;"><i class="fa fa-child fa-navbar"></i><strong class="text-capitalize"> {{player.playerName}}</strong></button>
-                        <button type="button" class="btn btn-default" disabled="disabled">
-                            <h2>{{player.playerScore}} <sup><i class="badge">{{player.tempScore}}</i></sup></h2>
-                        </button>
-                        <button type="button" class="btn btn-default btn-xs" disabled="disabled">{{player.history}}</button>
-
-                    </div>
-                </div>
-                <div class="col-xs-3 col-sm-3 col-md-3 text-right">
-                    <div class="btn-group-vertical" role="group">
-                        <button type="button" class="btn btn-default" ng-click="updateScore(player,1)"><i class="fa fa-plus-square fa-fw"></i>1</button>
-                        <button type="button" class="btn btn-default" ng-click="updateScore(player,5)"><i class="fa fa-plus-square fa-fw"></i>5</button>
-                        <button type="button" class="btn btn-default" href="#overlay-{{player.$id}}" toggle="on"><span class="caret"></span>
-                        </button>
+        <div ng-hide="user">
+            <div class="text-center">
+                <div class="panel panel-success">
+                    <div class="panel-heading">Welcome, please log in.</div>
+                    <div class="panel-body">
+                        <form class="form-inline" role="form" ng-submit="login()">
+                            <div class="btn-group-vertical" role="group">
+                                <input type='text' ng-model='form.email' id='email' placeholder='Email' class="form-control">
+                                <input type='password' ng-model='form.password' id='password' placeholder='Password' class="form-control">
+                                <button type="submit" class="btn btn-primary form-control">Login</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
+        </div>
+        <div ng-show="user">
+            <div class="list-group-item media container" ng-repeat="player in players | orderBy:predicate:reverse">
+                <!-- new layout: minus | score (name below) | plus -->
+                <div class="row">
+                    <div class="col-xs-3 col-sm-3 col-md-3">
+                        <div class="btn-group-vertical" role="group">
+                            <button type="button" class="btn btn-default" ng-click="updateScore(player,-1)"><i class="fa fa-minus-square fa-fw"></i>1</button>
+                            <button type="button" class="btn btn-default" ng-click="updateScore(player,-5)"><i class="fa fa-minus-square fa-fw"></i>5</button>
+                            <button type="button" class="btn btn-default" href="#overlay-{{player.$id}}" toggle="on"><span class="caret"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-sm-6 col-md-6 text-center">
+                        <div class="btn-group-vertical" role="group">
+                            <button type="button" class="btn btn-default" disabled="disabled" style="background-color: {{player.color}}; color: white;"><i class="fa fa-child fa-navbar"></i><strong class="text-capitalize"> {{player.playerName}}</strong>
+                            </button>
+                            <button type="button" class="btn btn-default" disabled="disabled">
+                                <h2>{{player.playerScore}} <sup><i class="badge">{{player.tempScore}}</i></sup></h2>
+                            </button>
+                            <button type="button" class="btn btn-default btn-xs" disabled="disabled">{{player.history}}</button>
 
-            <div overlay="overlay-{{player.$id}}">
-                <h4 class="overlay-title text-capitalize">Add Score for {{player.playerName}}</h4>
-                <p>
-                    <button type="button" class="btn btn-default" disabled="disabled">&nbsp;{{player.tempScore}}&nbsp;</button>
-                </p>
-                <div class="btn-group">
+                        </div>
+                    </div>
+                    <div class="col-xs-3 col-sm-3 col-md-3 text-right">
+                        <div class="btn-group-vertical" role="group">
+                            <button type="button" class="btn btn-default" ng-click="updateScore(player,1)"><i class="fa fa-plus-square fa-fw"></i>1</button>
+                            <button type="button" class="btn btn-default" ng-click="updateScore(player,5)"><i class="fa fa-plus-square fa-fw"></i>5</button>
+                            <button type="button" class="btn btn-default" href="#overlay-{{player.$id}}" toggle="on"><span class="caret"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-                    <button class="btn btn-default" ng-click="updateScore(player,1)"><i class="fa fa-plus-square-o fa-fw"></i>1</button>
-                    <button class="btn btn-default" ng-click="updateScore(player,5)"><i class="fa fa-plus-square-o fa-fw"></i>5</button>
-                    <button class="btn btn-default" ng-click="updateScore(player,10)"><i class="fa fa-plus-square-o fa-fw"></i>10</button>
-                </div>
-                <br />
-                <div class="btn-group">
-                    <button class="btn btn-default" ng-click="updateScore(player,50)"><i class="fa fa-plus-square-o fa-fw"></i>50</button>
-                    <button class="btn btn-default" ng-click="updateScore(player,100)"><i class="fa fa-plus-square-o fa-fw"></i>100</button>
-                    <button class="btn btn-default" ng-click="updateScore(player,500)"><i class="fa fa-plus-square-o fa-fw"></i>500</button>
-                </div>
-                <p>
+                <div overlay="overlay-{{player.$id}}">
+                    <h4 class="overlay-title text-capitalize">Add Score for {{player.playerName}}</h4>
+                    <p>
+                        <button type="button" class="btn btn-default" disabled="disabled">&nbsp;{{player.tempScore}}&nbsp;</button>
+                    </p>
                     <div class="btn-group">
-                        <button class="btn btn-default" ng-click="updateScore(player,-1)"><i class="fa fa-minus-square-o fa-fw"></i>1</button>
-                        <button class="btn btn-default" ng-click="updateScore(player,-5)"><i class="fa fa-minus-square-o fa-fw"></i>5</button>
-                        <button class="btn btn-default" ng-click="updateScore(player,-10)"><i class="fa fa-minus-square-o fa-fw"></i>10</button>
+
+                        <button class="btn btn-default" ng-click="updateScore(player,1)"><i class="fa fa-plus-square-o fa-fw"></i>1</button>
+                        <button class="btn btn-default" ng-click="updateScore(player,5)"><i class="fa fa-plus-square-o fa-fw"></i>5</button>
+                        <button class="btn btn-default" ng-click="updateScore(player,10)"><i class="fa fa-plus-square-o fa-fw"></i>10</button>
                     </div>
                     <br />
                     <div class="btn-group">
-                        <button class="btn btn-default" ng-click="updateScore(player,-50)"><i class="fa fa-minus-square-o fa-fw"></i>50</button>
-                        <button class="btn btn-default" ng-click="updateScore(player,-100)"><i class="fa fa-minus-square-o fa-fw"></i>100</button>
-                        <button class="btn btn-default" ng-click="updateScore(player,-500)"><i class="fa fa-minus-square-o fa-fw"></i>500</button>
+                        <button class="btn btn-default" ng-click="updateScore(player,50)"><i class="fa fa-plus-square-o fa-fw"></i>50</button>
+                        <button class="btn btn-default" ng-click="updateScore(player,100)"><i class="fa fa-plus-square-o fa-fw"></i>100</button>
+                        <button class="btn btn-default" ng-click="updateScore(player,500)"><i class="fa fa-plus-square-o fa-fw"></i>500</button>
                     </div>
-                </p>
+                    <p>
+                        <div class="btn-group">
+                            <button class="btn btn-default" ng-click="updateScore(player,-1)"><i class="fa fa-minus-square-o fa-fw"></i>1</button>
+                            <button class="btn btn-default" ng-click="updateScore(player,-5)"><i class="fa fa-minus-square-o fa-fw"></i>5</button>
+                            <button class="btn btn-default" ng-click="updateScore(player,-10)"><i class="fa fa-minus-square-o fa-fw"></i>10</button>
+                        </div>
+                        <br />
+                        <div class="btn-group">
+                            <button class="btn btn-default" ng-click="updateScore(player,-50)"><i class="fa fa-minus-square-o fa-fw"></i>50</button>
+                            <button class="btn btn-default" ng-click="updateScore(player,-100)"><i class="fa fa-minus-square-o fa-fw"></i>100</button>
+                            <button class="btn btn-default" ng-click="updateScore(player,-500)"><i class="fa fa-minus-square-o fa-fw"></i>500</button>
+                        </div>
+                    </p>
+                </div>
+                <!-- end of player repeat -->
             </div>
-            <!-- end of player repeat -->
         </div>
     </div>
 
@@ -72,9 +91,9 @@
             <div class="panel-body">
                 <form class="form-inline" role="form">
                     <div class="btn-group-vertical" role="group">
-                            <input type='text' ng-model='playerName' id='playerName' placeholder='Player Name' class="form-control" maxlength=13>
-                            <input label="Player Colour" type="color" id="color" ng-model='color' class="form-control">
-                            <a class="btn btn-primary form-control" ng-click="addPlayer()" toggle="off" bubble target="overlay">Add</a>
+                        <input type='text' ng-model='playerName' id='playerName' placeholder='Player Name' class="form-control" maxlength=13>
+                        <input label="Player Colour" type="color" id="color" ng-model='color' class="form-control">
+                        <a class="btn btn-primary form-control" ng-click="addPlayer()" toggle="off" bubble target="overlay">Add</a>
                     </div>
                 </form>
             </div>
@@ -85,7 +104,7 @@
         <div class="panel panel-success">
             <div class="panel-heading">Game info</div>
             <div class="panel-body">
-                    TODO: game info: BGG game details, picture, player colours, etc.
+                TODO: game info: BGG game details, picture, player colours, etc.
             </div>
         </div>
     </div>

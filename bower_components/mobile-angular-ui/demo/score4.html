@@ -5,23 +5,40 @@
 
 <div class="scrollable">
     <div class="scrollable-content section" ng-controller="ScoreController3">
-
-        <div class="list-group">
-            <div class="list-group-item media">
-                <div class="pull-right">
-                    <a class="btn btn-default" href="#overlay" toggle="on">New Game</a>
-                </div>
-                <div class="media-body">
-                    <h4>Please select a game</h4>
+        <div ng-hide="user">
+            <div class="text-center">
+                <div class="panel panel-success">
+                    <div class="panel-heading">Welcome, please log in.</div>
+                    <div class="panel-body">
+                        <form class="form-inline" role="form" ng-submit="login()">
+                            <div class="btn-group-vertical" role="group">
+                                <input type='text' ng-model='form.email' id='email' placeholder='Email' class="form-control">
+                                <input type='password' ng-model='form.password' id='password' placeholder='Password' class="form-control">
+                                <button type="submit" class="btn btn-primary form-control">Login</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-            <div class="list-group-item" ng-repeat="play in plays">
-                <a href="#/score4/plays/{{play.$id}}">
+        </div>
+        <div ng-show="user">
+            <div class="list-group">
+                <div class="list-group-item media">
+                    <div class="pull-right">
+                        <a class="btn btn-default" href="#overlay" toggle="on">New Game</a>
+                    </div>
+                    <div class="media-body">
+                        <h4>Please select a game</h4>
+                    </div>
+                </div>
+                <div class="list-group-item" ng-repeat="play in plays">
+                    <a href="#/score4/plays/{{play.$id}}">
                     {{play.gameName}}<br />(<i>{{play.time}}</i>)
                     <div class="pull-right">
                         <i class="fa fa-users"></i> x{{play.numberOfPlayers}} <i class="fa fa-chevron-right"></i>
                     </div>
                 </a>
+                </div>
             </div>
         </div>
         <div overlay="overlay">
@@ -42,9 +59,13 @@
         </div>
 
         <div content-for="footerBar">
-            <a ng-click="" class="btn btn-navbar"><i class="fa fa-info fa-navbar"></i> test</a>
-            <a ng-click="" class="btn btn-navbar"><i class="fa fa-circle-o-notch fa-navbar"></i> test</a>
-            <a ng-click="" class="btn btn-navbar"><i class="fa fa-child fa-navbar"></i> test</a>
+            <a class="btn btn-navbar" onClick="history.go(-1)"><i class="fa fa-ellipsis-h"></i></a>
+            <a ng-click="" class="btn btn-navbar"><i class="fa fa-circle-o-notch"></i></a>
+            <a ng-click="" class="btn btn-navbar"><i class="fa fa-circle-o-notch"></i></a>
+            <a ng-click="" class="btn btn-navbar"><i class="fa fa-circle-o-notch"></i></a>
+            <a ng-click="" class="btn btn-navbar"><i class="fa fa-circle-o-notch"></i></a>
+            <a ng-click="" class="btn btn-navbar"><i class="fa fa-circle-o-notch"></i></a>
+            <a ng-click="" class="btn btn-navbar"><i class="fa fa-circle-o-notch"></i></a>
 
         </div>
 
