@@ -68,15 +68,13 @@
 
     <div overlay="overlay">
         <div class="panel panel-success">
-            <div class="panel-heading">Add new player</div>
+            <div class="panel-heading">Add new player (13 Character limit)</div>
             <div class="panel-body">
                 <form class="form-inline" role="form">
-                    <div class="form-group">
-                        <div class="input-group">
+                    <div class="btn-group-vertical" role="group">
                             <input type='text' ng-model='playerName' id='playerName' placeholder='Player Name' class="form-control" maxlength=13>
                             <input label="Player Colour" type="color" id="color" ng-model='color' class="form-control">
                             <a class="btn btn-primary form-control" ng-click="addPlayer()" toggle="off" bubble target="overlay">Add</a>
-                        </div>
                     </div>
                 </form>
             </div>

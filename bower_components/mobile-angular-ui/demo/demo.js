@@ -1,4 +1,10 @@
 var app = angular.module('MobileAngularUiExamples', ["ngRoute", "ngTouch", "mobile-angular-ui", "firebase", "googlechart"]);
+app.factory("Auth", ["$firebaseAuth",
+    function($firebaseAuth) {
+        var authRef = new Firebase("https://iisjreg-playground.firebaseio.com/users");
+        return $firebaseAuth(authRef);
+    }
+]);
 app.config(function($routeProvider, $locationProvider) {
     $routeProvider.when('/', {
         templateUrl: "home.html"
@@ -48,6 +54,9 @@ app.config(function($routeProvider, $locationProvider) {
         templateUrl: "score3-history.html"
         //params.playID
     });
+    $routeProvider.when('/user', {
+        templateUrl: "user.html",
+    });
 });
 app.controller('ChatController', function($rootScope, $scope, $firebase) {
     //CHAT TESTING
@@ -76,6 +85,28 @@ app.controller('ChatController', function($rootScope, $scope, $firebase) {
             //RESET MESSAGE
             $scope.msg = "";
         }
+    }
+});
+app.controller('UserController', function($rootScope, $scope, $firebase, $location, Auth) {
+    //USER TESTING
+    //CREATE A FIREBASE REFERENCE
+    $scope.form = {};
+    $scope.auth = Auth;
+    $scope.user = $scope.auth.$getAuth();
+    $scope.login = function() {
+        console.log("login");
+        $scope.auth.$authWithPassword({
+            email: $scope.form.email,
+            password: $scope.form.password
+        }).then(function(authData) {
+            console.log("Logged in as:", authData.uid);
+            $location.path('/user');
+        }).catch(function(error) {
+            console.error("Authentication failed:", error);
+        });
+    }
+    $scope.logout = function() {
+        $scope.auth.$unAuth();
     }
 });
 app.controller('ScoreController', function($rootScope, $scope, $firebase) {
@@ -199,7 +230,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                 var playerName = $scope.playerName || 'anonymous';
                 console.log(playerName);
                 $scope.players.$add({
-                    playerName: playerName.substr(0,13),
+                    playerName: playerName.substr(0, 13),
                     playerScore: 0,
                     turnOrder: 0,
                     tempScore: "",
@@ -228,7 +259,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                     players.$save(player);
                 }, 3000);
             }
-            
+
             function wait(ref, func, time) {
                 timer[ref] = setTimeout(func, time); //PROBABLY NOT NECESSARY
             }

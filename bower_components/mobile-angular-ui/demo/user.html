@@ -1,0 +1,46 @@
+<div content-for="title">
+    <span>User test</span>
+</div>
+
+
+<div class="scrollable">
+    <div class="scrollable-content section" ng-controller="UserController">
+
+        <div>
+            <div ng-hide="user">
+                <p>Welcome, please log in.</p>
+                <form class="form-inline" role="form">
+                    <div class="btn-group-vertical" role="group">
+                        <input type='text' ng-model='form.email' id='email' placeholder='Email' class="form-control">
+                        <input type='password' ng-model='form.password' id='password' placeholder='Password' class="form-control">
+                        <a class="btn btn-primary form-control" ng-click="login()">Login</a><p>
+                    </div>
+                </form>
+            </div>
+            <div ng-show="user">
+                <p>Hello, {{user.password.email}}</p>
+                <a class="btn btn-default" href="#/" ng-click="auth.$unauth()">Logout</a>
+            </div>
+        </div>
+
+        <div overlay="overlay">
+            <div class="list-group-item">
+                <div class="panel panel-success">
+                    <div class="panel-heading">user overlay</div>
+                    <div class="panel-body">
+                        OVERLAY STUFF
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div content-for="footerBar">
+            <a ng-click="" class="btn btn-navbar"><i class="fa fa-info fa-navbar"></i> test</a>
+            <a ng-click="" class="btn btn-navbar"><i class="fa fa-circle-o-notch fa-navbar"></i> test</a>
+            <a ng-click="" class="btn btn-navbar"><i class="fa fa-child fa-navbar"></i> test</a>
+
+        </div>
+
+
+    </div>
+</div>
