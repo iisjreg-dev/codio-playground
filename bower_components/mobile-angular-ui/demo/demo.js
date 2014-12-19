@@ -90,6 +90,9 @@ app.controller('ChatController', function($rootScope, $scope, $firebase) {
 app.controller('UserController', function($rootScope, $scope, $firebase, $location, Auth) {
     //USER TESTING
     //CREATE A FIREBASE REFERENCE
+    //var usersRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + $scope.auth.uid);
+    //var user = $firebase(usersRef).$asObject();
+    //$scope.user = user;
 });
 app.controller('ScoreController', function($rootScope, $scope, $firebase) {
     //SCORE TESTING
@@ -180,11 +183,16 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
     if(params.playID) {
         //show individual play
         console.log("params playID = " + params.playID);
+        //PLAY REF
         var playRef = new Firebase("https://iisjreg-playground.firebaseio.com/scores3/" + params.playID);
         var play = $firebase(playRef).$asObject();
         $scope.play = play;
+        //PLAYERS REF
         var playerRef = new Firebase("https://iisjreg-playground.firebaseio.com/scores3/" + params.playID + "/players");
         var players = $firebase(playerRef).$asArray();
+        //CAHT REF
+        var chatRef = new Firebase("https://iisjreg-playground.firebaseio.com/scores3/" + params.playID + "/chat");
+        var messages = $firebase(chatRef).$asArray();
         players.$loaded().then(function() {
             console.log(players.length + " players in play");
             var numberOfPlayers = players.length;
@@ -193,9 +201,11 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                 console.log("Player '" + deletedPost.playerName + "' has been deleted");
                 numberOfPlayers -= 1;
             });
-            $scope.predicate = "-playerScore";
+            $scope.scorePredicate = "-playerScore";
+            $scope.chatPredicate = '-ISOtime';
             $scope.numberOfPlayers = numberOfPlayers;
             $scope.players = players;
+            $scope.messages = messages;
             //
             //functions
             //
@@ -220,6 +230,22 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                     color: newColor
                 });
                 $scope.playerName = "";
+            }
+            $scope.addMessage = function() {
+                var time = new Date();
+                console.log("msg");
+                console.log(time);
+                console.log($scope.msg);
+                console.log($scope.user.uid);
+                $scope.messages.$add({
+                    name: $scope.user.uid,
+                    text: $scope.msg,
+                    time: time.toUTCString(),
+                    ISOtime: time.toISOString()
+                });
+                //RESET MESSAGE
+                $scope.msg = "";
+                //}
             }
             $scope.changeColor = function(player) {
                 var colors = ["blue", "red", "yellow", "green", "orange"];
@@ -300,8 +326,10 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                 //ADD TO FIREBASE
                 console.log(gameName);
                 console.log(time);
+                console.log($scope.user.uid);
                 $scope.plays.$add({
                     gameName: gameName,
+                    creatorUid: $scope.user.uid,
                     time: time.toUTCString(),
                     ISOtime: time.toISOString(),
                     numberOfPlayers: 0
@@ -368,13 +396,6 @@ app.controller('historyController', function($rootScope, $scope, $firebase, $rou
             var data6a = new Date("Thu, 11 Dec 2014 23:55:18 GMT").toTimeString();
             var data7a = new Date("Thu, 11 Dec 2014 23:55:18 GMT").toTimeString();
             var data8a = new Date("Fri, 12 Dec 2014 00:10:18 GMT").toTimeString();
-            //var data1b = data1a.getHours().toString() + ":" + data1a.getMinutes().toString();
-            //var data2b = data2a.getHours().toString() + ":" + data2a.getMinutes().toString();
-            //var data3b = data3a.getHours().toString() + ":" + data3a.getMinutes().toString();
-            //var data4b = data4a.getHours().toString() + ":" + data4a.getMinutes().toString();
-            //var data5b = data5a.getHours().toString() + ":" + data5a.getMinutes().toString();
-            //var data6b = data6a.getHours().toString() + ":" + data6a.getMinutes().toString();
-            //var data7b = data7a.getHours().toString() + ":" + data7a.getMinutes().toString();
             testdata.addRows([
                 [data1a.substr(0, 5), 2, 4],
                 [data2a.substr(0, 5), 3, 5],

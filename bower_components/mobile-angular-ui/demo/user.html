@@ -32,8 +32,10 @@
                         </div>
                     </div>
             </div>
-            <div ng-show="user">
-                <p>Hello, {{user.password.email}}</p>
+            <div ng-if="user">
+                <p>Hello, {{user.password.email}}</p>{{user.uid}}
+                
+              
 
             </div>
         </div>

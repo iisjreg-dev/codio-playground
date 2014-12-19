@@ -2,7 +2,6 @@
     <span>Game Select</span>
 </div>
 
-
 <div class="scrollable">
     <div class="scrollable-content section" ng-controller="ScoreController3">
         <div ng-hide="user">
@@ -21,7 +20,7 @@
                 </div>
             </div>
         </div>
-        <div ng-show="user">
+        <div ng-if="user">
             <div class="list-group">
                 <div class="list-group-item media">
                     <div class="pull-right">
@@ -31,7 +30,7 @@
                         <h4>Please select a game</h4>
                     </div>
                 </div>
-                <div class="list-group-item" ng-repeat="play in plays">
+                <div class="list-group-item" ng-repeat="play in plays | filter:{creatorUid: user.uid}">
                     <a href="#/score4/plays/{{play.$id}}">
                     {{play.gameName}}<br />(<i>{{play.time}}</i>)
                     <div class="pull-right">
@@ -41,6 +40,8 @@
                 </div>
             </div>
         </div>
+        
+        
         <div overlay="overlay">
             <div class="list-group-item">
                 <div class="panel panel-success">
