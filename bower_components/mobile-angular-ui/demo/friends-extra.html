@@ -1,5 +1,5 @@
 <div class="scrollable">
-    <div class="scrollable-content section" ng-controller="ScoreController3">
+    <div class="scrollable-content section" ng-controller="FriendsController">
         <div ng-hide="user" class="text-center">
             <a href="#overlay-login" toggle="on" class="btn btn-standard"><i class="fa fa-sign-in"></i> Sign in / Register</a>
         </div>
@@ -7,17 +7,17 @@
             <div class="list-group">
                 <div class="list-group-item media">
                     <div class="pull-right">
-                        <a class="btn btn-default" href="#overlay-new-play" toggle="on">New Game</a>
+                        <a class="btn btn-default" href="#overlay-new-friend" toggle="on">Add Friend</a>
                     </div>
                     <div class="media-body">
-                        <h4>Please select a game</h4>
+                        <h4>Friends</h4>
                     </div>
                 </div>
-                <div class="list-group-item" ng-repeat="play in plays | filter:{creatorUid: user.uid}">
-                    <a href="#/score4/plays/{{play.$id}}">
-                    {{play.gameName}}<br />(<i>{{play.time}}</i>)
+                <div class="list-group-item" ng-repeat="friend in friends | filter:{creatorUid: user.uid}">
+                    <a href="">
+                    {{friend.uid}} (<i>{{friend.status}}</i>)
                     <div class="pull-right">
-                        <i class="fa fa-users"></i> x{{play.numberOfPlayers}} <i class="fa fa-chevron-right"></i>
+                        <i class="fa fa-chevron-right"></i>
                     </div>
                 </a>
                 </div>
@@ -25,13 +25,13 @@
         </div>
 
         <!-- OVERLAYS -->
-        <div overlay="overlay-new-play">
+        <div overlay="overlay-new-friend">
             <div class="panel panel-success">
                 <div class="panel-heading">Play new game</div>
                 <div class="panel-body">
                     <div class="input-group">
-                        <input type='text' ng-model='gameName' id='gameName' placeholder='Game Name' class="form-control">
-                        <span class="btn btn-primary form-control" ng-click="addPlay()" toggle="off" bubble target="overlay-new-play">Add</span>
+                        <input type='text' ng-model='friendEmail' id='friendEmail' placeholder='Email' class="form-control">
+                        <span class="btn btn-primary form-control" ng-click="addFriend()" toggle="off" bubble target="overlay-new-friend">Add</span>
 
                     </div>
                 </div>
@@ -39,7 +39,7 @@
         </div>
         <!-- PAGE SPECIFIC CONTENT - TITLE/ACTION/SIDEBAR/FOOTER -->
         <div content-for="title">
-            <span>Game Select</span>
+            <span>Friends</span>
         </div>
         <div content-for="footerBar">
             <a class="btn btn-navbar" onClick="history.go(-1)"><i class="fa fa-ellipsis-h"></i></a>

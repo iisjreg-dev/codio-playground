@@ -57,6 +57,9 @@ app.config(function($routeProvider, $locationProvider) {
     $routeProvider.when('/user', {
         templateUrl: "user.html",
     });
+    $routeProvider.when('/friends', {
+        templateUrl: "friends.html",
+    });
 });
 app.controller('ChatController', function($rootScope, $scope, $firebase) {
     //CHAT TESTING
@@ -87,12 +90,116 @@ app.controller('ChatController', function($rootScope, $scope, $firebase) {
         }
     }
 });
-app.controller('UserController', function($rootScope, $scope, $firebase, $location, Auth) {
+app.controller('UserController', function($rootScope, $scope, $firebase, $location) {
     //USER TESTING
     //CREATE A FIREBASE REFERENCE
     //var usersRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + $scope.auth.uid);
     //var user = $firebase(usersRef).$asObject();
     //$scope.user = user;
+});
+app.controller('FriendsController', function($rootScope, $scope, $firebase, $location) {
+    //FRIEND TESTING
+    //CREATE A FIREBASE REFERENCE
+    //
+    //STATUSES: APPROVED, REJECTED, WAITING (for requestee), PENDING (for requester)
+    //
+    //
+    console.log("friends...");
+    //console.log();
+    var friendsRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + $scope.user.uid + "/friends");
+    var friends = $firebase(friendsRef).$asArray();
+    friends.$loaded().then(function() {
+        console.log("loaded");
+        $scope.friends = friends;
+        //console.log(friends);
+        $scope.add = {};
+        $scope.addFriend = function() {
+            $scope.add.error = "";
+            console.log("add friend " + $scope.friendEmail);
+            var time = new Date();
+            //FIND USER BY EMAIL ADDRESS
+            var usersRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/");
+            var success = false;
+            var friendUid = "";
+            var currentFriendRecordID = "";
+            var friendFriendRecordID = "";
+            usersRef.once('value', function(dataSnapshot) {
+                dataSnapshot.forEach(function(childSnapshot) {
+                    //CHECK EACH USER'S EMAIL
+                    var email = childSnapshot.child("password").child("email").val();
+                    if(email == $scope.friendEmail) {
+                        var friend = childSnapshot.val(); //$ID FOR CURRENT USER - probably not needed
+                        friendUid = friend.uid; //UID FOR CURRENT USER
+                        console.log(friendUid);
+                        $scope.friends.$add({ //ADD "RELATIONSHIP" TO CURRENT USER, REFERENCING FRIEND UID
+                            uid: friendUid,
+                            status: "PENDING",
+                            requestSent: time.toUTCString()
+                        }).then(function(ref) {
+                            currentFriendRecordID = ref.key(); //$ID FOR "RELATIONSHIP"
+                            console.log("added record with id " + id); 
+                            //list.$indexFor(id); // returns location in the array
+                        });
+                        
+                        //UPDATE FRIEND'S FRIEND LIST
+                        var otherRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + friendUid + "/friends");
+                        var other = $firebase(otherRef).$asArray();
+                        other.$add({ //ADD "RELATIONSHIP" TO FRIEND USER, REFERECING CURRENT USER UID and RELATIONSHIP ID
+                            uid: $scope.user.uid,
+                            status: "WAITING",
+                            requesterRelationshipID: currentFriendRecordID,
+                            requestSent: time.toUTCString()
+                        }).then(function(ref) {
+                            friendFriendRecordID = ref.key(); //$ID FOR FRIEND'S "RELATIONSHIP" RECORD OF THIS RELATIONSHIP
+                            console.log("added record with id " + id); 
+                            //list.$indexFor(id); // returns location in the array
+                        });
+                        //UPDATE CURRENT RELATIONSHIP WITH FRIEND'S RELATIONSHIP ID
+                        
+                        
+                        $rootScope.toggle('overlay-add-friend', 'off');
+                        success = true;
+                        return true;
+                    }
+                });
+                if(!success){
+                    //error message
+                    console.log("user not found");
+                }
+            });
+        }
+        $scope.processRequest = function(approved, friend) {
+            console.log(friend.uid + " request approved? " + approved);
+            var newStatus = "";
+            if(approved == true) {
+                newStatus = "APPROVED";
+            }
+            if(approved == false) {
+                newStatus = "REJECTED";
+            }
+            //             friend.status = newStatus;
+            //             $scope.friends.$save(friend);
+            //             var otherRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + friend.uid + "/friends");
+            //             var other = $firebase(otherRef).$asArray();
+            //             otherRef.once('value', function(dataSnapshot) {
+            //                 // store dataSnapshot for use in below examples.
+            //                 dataSnapshot.forEach(function(childSnapshot) {
+            //                     //var key = childSnapshot.key();
+            //                     //var childData = childSnapshot.val();
+            //                     var uid = childSnapshot.child("uid").val();
+            //                     //console.log(email);
+            //                     if(uid == $scope.user.uid) {
+            //                         var record = childSnapshot.val();
+            //                         //friendUid = friend.uid;
+            //                         console.log(record);
+            //                         friend.status = newStatus;
+            //                         other
+            //                         return true;
+            //                     }
+            //                 });
+            //             });
+        }
+    });
 });
 app.controller('ScoreController', function($rootScope, $scope, $firebase) {
     //SCORE TESTING
@@ -205,7 +312,10 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
             $scope.chatPredicate = '-ISOtime';
             $scope.numberOfPlayers = numberOfPlayers;
             $scope.players = players;
-            $scope.messages = messages;
+            messages.$loaded().then(function() {
+                $scope.messages = messages;
+                $scope.numberOfMessages = messages.length;
+            });
             //
             //functions
             //
@@ -237,8 +347,9 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                 console.log(time);
                 console.log($scope.msg);
                 console.log($scope.user.uid);
+                console.log($scope.userDetails.name);
                 $scope.messages.$add({
-                    name: $scope.user.uid,
+                    name: $scope.userDetails.name,
                     text: $scope.msg,
                     time: time.toUTCString(),
                     ISOtime: time.toISOString()
@@ -310,7 +421,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
         var ref = new Firebase("https://iisjreg-playground.firebaseio.com/scores3");
         var plays = $firebase(ref).$asArray();
         plays.$loaded().then(function() {
-            console.log(plays.length + " current games");
+            //console.log(plays.length + " current games");
             var numberOfPlays = plays.length;
             ref.on("child_removed", function(snapshot) {
                 var deletedPost = snapshot.val();
@@ -341,9 +452,10 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
 app.controller('historyController', function($rootScope, $scope, $firebase, $routeParams) {
     //history TESTING
     //
-    var timer = [];
+    //var timer = [];
     var params = $routeParams;
     if(params.playID) {
+        var testdata = new google.visualization.DataTable();
         //show individual play
         console.log("params playID = " + params.playID);
         var playRef = new Firebase("https://iisjreg-playground.firebaseio.com/scores3/" + params.playID);
@@ -374,7 +486,6 @@ app.controller('historyController', function($rootScope, $scope, $firebase, $rou
             //
             //
             //
-            var testdata = new google.visualization.DataTable();
             // Declare columns
             testdata.addColumn('string', 'Score datetime');
             testdata.addColumn('number', 'score');
@@ -438,7 +549,6 @@ app.controller('historyController', function($rootScope, $scope, $firebase, $rou
             $scope.chart = chart1;
         });
     } else {
-        //show all plays
         console.log("no params");
     }
 });
@@ -454,6 +564,13 @@ app.controller('MainController', function($rootScope, $scope, $firebase, $window
     $scope.form = {};
     $scope.auth = Auth;
     $scope.user = $scope.auth.$getAuth();
+    if($scope.user) {
+        var userRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + $scope.user.uid + "/details");
+        var userDetails = $firebase(userRef).$asObject();
+        $scope.userDetails = userDetails;
+    }
+    //$scope.userDetails = $scope.user.child("details");
+    //FUNCTIONS
     $scope.login = function() {
         console.log("login");
         $scope.auth.$authWithPassword({
@@ -476,14 +593,22 @@ app.controller('MainController', function($rootScope, $scope, $firebase, $window
     $scope.newAccount = function() {
         var isNewUser = true;
         console.log("new account");
+        console.log($scope.form.newEmail);
+        console.log($scope.form.newName);
+        console.log($scope.form.newColor);
         $scope.auth.$createUser($scope.form.newEmail, $scope.form.newPassword).then(function() {
             console.log("User created successfully!");
-            var usersRef = new Firebase("https://iisjreg-playground.firebaseio.com");
+            var usersRef = new Firebase("https://iisjreg-playground.firebaseio.com/users");
             usersRef.onAuth(function(authData) {
                 if(authData && isNewUser) {
                     // save the user's profile into Firebase so we can list users,
                     // use them in Security and Firebase Rules, and show profiles
-                    usersRef.child("users").child(authData.uid).set(authData);
+                    usersRef.child(authData.uid).set(authData);
+                    //try to save extra details
+                    usersRef.child(authData.uid).child("details").set({
+                        name: $scope.form.newName,
+                        favouriteColor: $scope.form.newColor
+                    });
                 }
             });
             return $scope.auth.$authWithPassword({
@@ -508,14 +633,4 @@ app.controller('MainController', function($rootScope, $scope, $firebase, $window
         payed: true
     };
     $scope.userAgent = navigator.userAgent;
-    $scope.chatUsers = [{
-        name: "Carlos  Flowers",
-        online: true
-    }, {
-        name: "Byron Taylor",
-        online: true
-    }, {
-        name: "Jana  Terry",
-        online: true
-    }];
 });

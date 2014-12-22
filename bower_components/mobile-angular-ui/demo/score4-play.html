@@ -1,20 +1,7 @@
 <div class="scrollable" ng-controller="ScoreController3">
     <div class="scrollable-content section">
-        <div ng-hide="user">
-            <div class="text-center">
-                <div class="panel panel-success">
-                    <div class="panel-heading">Welcome, please log in.</div>
-                    <div class="panel-body">
-                        <form class="form-inline" role="form" ng-submit="login()">
-                            <div class="btn-group-vertical" role="group">
-                                <input type='text' ng-model='form.email' id='email' placeholder='Email' class="form-control">
-                                <input type='password' ng-model='form.password' id='password' placeholder='Password' class="form-control">
-                                <button type="submit" class="btn btn-primary form-control">Login</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+        <div ng-hide="user" class="text-center">
+            <a href="#overlay-login" toggle="on" class="btn btn-standard"><i class="fa fa-sign-in"></i> Sign in / Register</a>
         </div>
         <div ng-if="user">
             <div class="list-group-item media container" ng-repeat="player in players | orderBy:scorePredicate:reverse">
@@ -48,7 +35,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- OVERLAY FOR EACH PLAYER -->
+                <!-- SCORE OVERLAY FOR EACH PLAYER -->
                 <div overlay="overlay-{{player.$id}}">
                     <h4 class="overlay-title text-capitalize">Add Score for {{player.playerName}}</h4>
                     <p>
@@ -86,8 +73,8 @@
 
         </div>
     </div>
-
-    <div overlay="overlay">
+    <!-- OVERLAYS -->
+    <div overlay="overlay-new-player">
         <div class="panel panel-success">
             <div class="panel-heading">Add new player (13 Character limit)</div>
             <div class="panel-body">
@@ -95,7 +82,7 @@
                     <div class="btn-group-vertical" role="group">
                         <input type='text' ng-model='playerName' id='playerName' placeholder='Player Name' class="form-control" maxlength=13>
                         <input label="Player Colour" type="color" id="color" ng-model='color' class="form-control">
-                        <a class="btn btn-primary form-control" ng-click="addPlayer()" toggle="off" bubble target="overlay">Add</a>
+                        <a class="btn btn-primary form-control" ng-click="addPlayer()" toggle="off" bubble target="overlay-new-player">Add</a>
                     </div>
                 </form>
             </div>
@@ -110,6 +97,7 @@
             </div>
         </div>
     </div>
+    <!-- PAGE SPECIFIC CONTENT - TITLE/ACTION/SIDEBAR/FOOTER -->
     <div content-for="title">
         <span>{{play.gameName}}</span>
     </div>
@@ -121,27 +109,35 @@
         <a ng-click="scorePredicate = 'playerName'" class="btn btn-navbar"><i class="fa fa-sort-alpha-asc"></i></a>
         <a href="#overlay-info" toggle="on" class="btn btn-navbar"><i class="fa fa-info fa-navbar"></i></a>
         <a href="#/score3/plays/history/{{play.$id}}" class="btn btn-navbar"><i class="fa fa-line-chart fa-navbar"></i></a>
-        <a href="#overlay" toggle="on" class="btn btn-navbar"><i class="fa fa-plus fa-navbar"></i><i class="fa fa-user fa-navbar"></i></a>
+        <a href="#overlay-new-player" toggle="on" class="btn btn-navbar"><i class="fa fa-plus fa-navbar"></i><i class="fa fa-user fa-navbar"></i></a>
     </div>
-
-    <div class="list-group" id='messagesList' content-for="chatSidebar">
-        <div class="list-group-item">
-            Comments:
-        </div>
-        <div class="list-group-item" ng-repeat='msg in messages | orderBy:chatPredicate:reverse'>
-            <span class="label label-info">{{msg.time}}</span>
-            <br />
-            <strong>{{msg.name}}</strong> - {{msg.text}}
-        </div>
-        <div class="list-group-item text-center">
-            <div>
-                <form role="form" ng-submit="addMessage()">
-                    <input type='text' ng-model='msg' id='msg' placeholder='Comment' class="form-control">
-                </form>
+    <div ng-if="user">
+        <div class="list-group" id='messagesList' content-for="chatSidebar">
+            <div class="list-group-item">
+                Comments:
+                <div ng-click="toggle('rightSidebar')" class="btn btn-default pull-right">
+                    <i class="fa fa-arrow-right"></i>
+                </div>
+            </div>
+            <div class="list-group-item" ng-repeat='msg in messages | orderBy:chatPredicate:reverse'>
+                <span class="label label-info">{{msg.time}}</span>
                 <br />
+                <strong>{{msg.name}}</strong> - {{msg.text}}
+            </div>
+            <div class="list-group-item text-center">
+                <div>
+                    <form role="form" ng-submit="addMessage()">
+                        <input type='text' ng-model='msg' id='msg' placeholder='Comment' class="form-control">
+                    </form>
+                    <br />
+                </div>
+            </div>
+            <div content-for="navbarAction">
+                <div ng-click="toggle('rightSidebar')" class="btn btn-navbar">
+                    <span class="badge"><i ng-if="numberOfMessages">{{numberOfMessages}}</i> <i class="fa fa-comments"></i></span>
+                </div>
             </div>
         </div>
     </div>
-
 
 </div>
