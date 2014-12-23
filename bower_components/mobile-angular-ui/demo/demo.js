@@ -105,101 +105,85 @@ app.controller('FriendsController', function($rootScope, $scope, $firebase, $loc
     //
     //
     console.log("friends...");
-    //console.log();
-    var friendsRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + $scope.user.uid + "/friends");
-    var friends = $firebase(friendsRef).$asArray();
+    var myFriendsRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + $scope.user.uid + "/friends");
+    var friends = $firebase(myFriendsRef).$asArray();
     friends.$loaded().then(function() {
-        console.log("loaded");
         $scope.friends = friends;
-        //console.log(friends);
-        $scope.add = {};
-        $scope.addFriend = function() {
-            $scope.add.error = "";
-            console.log("add friend " + $scope.friendEmail);
-            var time = new Date();
-            //FIND USER BY EMAIL ADDRESS
-            var usersRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/");
-            var success = false;
-            var friendUid = "";
-            var currentFriendRecordID = "";
-            var friendFriendRecordID = "";
-            usersRef.once('value', function(dataSnapshot) {
-                dataSnapshot.forEach(function(childSnapshot) {
-                    //CHECK EACH USER'S EMAIL
-                    var email = childSnapshot.child("password").child("email").val();
-                    if(email == $scope.friendEmail) {
-                        var friend = childSnapshot.val(); //$ID FOR CURRENT USER - probably not needed
-                        friendUid = friend.uid; //UID FOR CURRENT USER
-                        console.log(friendUid);
-                        $scope.friends.$add({ //ADD "RELATIONSHIP" TO CURRENT USER, REFERENCING FRIEND UID
-                            uid: friendUid,
-                            status: "PENDING",
-                            requestSent: time.toUTCString()
-                        }).then(function(ref) {
-                            currentFriendRecordID = ref.key(); //$ID FOR "RELATIONSHIP"
-                            console.log("added record with id " + id); 
-                            //list.$indexFor(id); // returns location in the array
-                        });
-                        
-                        //UPDATE FRIEND'S FRIEND LIST
-                        var otherRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + friendUid + "/friends");
-                        var other = $firebase(otherRef).$asArray();
-                        other.$add({ //ADD "RELATIONSHIP" TO FRIEND USER, REFERECING CURRENT USER UID and RELATIONSHIP ID
-                            uid: $scope.user.uid,
-                            status: "WAITING",
-                            requesterRelationshipID: currentFriendRecordID,
-                            requestSent: time.toUTCString()
-                        }).then(function(ref) {
-                            friendFriendRecordID = ref.key(); //$ID FOR FRIEND'S "RELATIONSHIP" RECORD OF THIS RELATIONSHIP
-                            console.log("added record with id " + id); 
-                            //list.$indexFor(id); // returns location in the array
-                        });
-                        //UPDATE CURRENT RELATIONSHIP WITH FRIEND'S RELATIONSHIP ID
-                        
-                        
-                        $rootScope.toggle('overlay-add-friend', 'off');
-                        success = true;
-                        return true;
-                    }
-                });
-                if(!success){
-                    //error message
-                    console.log("user not found");
+    });
+    $scope.add = {};
+    $scope.addFriend = function() {
+        $scope.add.error = "";
+        console.log("add friend " + $scope.friendEmail);
+        var time = new Date();
+        //FIND USER BY EMAIL ADDRESS
+        var usersRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/");
+        var success = false;
+        var friendUid = "";
+        var currentFriendRecordID = "";
+        var friendFriendRecordID = "";
+        usersRef.once('value', function(dataSnapshot) {
+            dataSnapshot.forEach(function(childSnapshot) {
+                //CHECK EACH USER'S EMAIL
+                var friendEmail = childSnapshot.child("password").child("email").val();
+                var friendName = childSnapshot.child("details").child("name").val();
+                console.log("1" + friendEmail);
+                console.log("2" + friendName);
+                if(friendEmail == $scope.friendEmail) {
+                    console.log("3" + "match! " + friendEmail);
+                    var friend = childSnapshot.val(); //FRIEND USER OBJECT
+                    console.log("4" + friend);
+                    var friendsListRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + $scope.user.uid + "/friends/" + friend.uid); //ADD CHILD FOR FRIEND UID
+                    friendsListRef.set({
+                        email: friendEmail, //EMAIL OF FRIEND
+                        name: friendName, //NAME OF FRIEND
+                        status: "PENDING",
+                        requestSent: time.toUTCString()
+                    });
+                    //UPDATE FRIEND'S FRIEND LIST
+                    console.log("5" + friend.uid); //FRIEND'S UID
+                    var otherFriendsListRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + friend.uid + "/friends/" + $scope.user.uid); //ADD CHILD FOR CURRENT USER UID
+                    var email = $scope.user.password.email; //CURRENT USER'S EMAIL
+                    var name = $scope.userDetails.name; //CURRENT USER'S NAME
+                    console.log("6" + email);
+                    console.log("7" + name);
+                    otherFriendsListRef.set({
+                        email: email,
+                        name: name,
+                        status: "WAITING",
+                        requestSent: time.toUTCString()
+                    });
+                    $rootScope.toggle('overlay-add-friend', 'off');
+                    success = true;
+                    return true;
                 }
             });
-        }
-        $scope.processRequest = function(approved, friend) {
-            console.log(friend.uid + " request approved? " + approved);
-            var newStatus = "";
-            if(approved == true) {
-                newStatus = "APPROVED";
+            if(!success) {
+                //error message
+                console.log("user not found");
+                $scope.add.error = "User not found";
             }
-            if(approved == false) {
-                newStatus = "REJECTED";
-            }
-            //             friend.status = newStatus;
-            //             $scope.friends.$save(friend);
-            //             var otherRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + friend.uid + "/friends");
-            //             var other = $firebase(otherRef).$asArray();
-            //             otherRef.once('value', function(dataSnapshot) {
-            //                 // store dataSnapshot for use in below examples.
-            //                 dataSnapshot.forEach(function(childSnapshot) {
-            //                     //var key = childSnapshot.key();
-            //                     //var childData = childSnapshot.val();
-            //                     var uid = childSnapshot.child("uid").val();
-            //                     //console.log(email);
-            //                     if(uid == $scope.user.uid) {
-            //                         var record = childSnapshot.val();
-            //                         //friendUid = friend.uid;
-            //                         console.log(record);
-            //                         friend.status = newStatus;
-            //                         other
-            //                         return true;
-            //                     }
-            //                 });
-            //             });
+        });
+    }
+    $scope.processRequest = function(approved, requester) {
+        var newStatus = "";
+        if(approved == true) {
+            newStatus = "APPROVED";
         }
-    });
+        if(approved == false) {
+            newStatus = "REJECTED";
+        }
+        //console.log("requester.$id " + request.$id + " " + request.status)
+        var FriendsListRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + $scope.user.uid + "/friends/" + requester.$id);
+        FriendsListRef.update({
+            status: newStatus
+        });
+        console.log("current user updated");
+        var otherFriendsListRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + requester.$id + "/friends/" + $scope.user.uid);
+        otherFriendsListRef.update({
+            status: newStatus
+        });
+        console.log("updated other user");
+    }
 });
 app.controller('ScoreController', function($rootScope, $scope, $firebase) {
     //SCORE TESTING
