@@ -76,6 +76,26 @@
     <!-- OVERLAYS -->
     <div overlay="overlay-new-player">
         <div class="panel panel-success">
+            <div class="panel-heading">Add Me!</div>
+            <div class="panel-body">
+                <form class="form-inline" role="form">
+                    <div class="btn-group-vertical" role="group">
+                        <a class="btn btn-primary form-control" ng-click="addUserPlayer()" toggle="off" bubble target="overlay-new-player">Add</a>
+                    </div>
+                </form>
+            </div>
+        </div><p><div class="panel panel-success">
+            <div class="panel-heading">Add friend</div>
+            <div class="panel-body">
+                <form class="form-inline" role="form">
+                    <div class="btn-group-vertical" role="group">
+                        <select ng-model="addFriend" ng-options="friend.name for friend in friends"></select>
+                        <a class="btn btn-primary form-control" ng-click="addFriendPlayer()" toggle="off" bubble target="overlay-new-player">Add</a>
+                    </div>
+                </form>
+            </div>
+        </div><p>
+        <div class="panel panel-success">
             <div class="panel-heading">Add new player (13 Character limit)</div>
             <div class="panel-body">
                 <form class="form-inline" role="form">
@@ -91,9 +111,8 @@
 
     <div overlay="overlay-info">
         <div class="panel panel-success">
-            <div class="panel-heading">Game info</div>
+            <div class="panel-heading">Game info.....</div>
             <div class="panel-body">
-                TODO: game info: BGG game details, picture, player colours, etc.
             </div>
         </div>
     </div>
@@ -111,6 +130,7 @@
         <a href="#/score3/plays/history/{{play.$id}}" class="btn btn-navbar"><i class="fa fa-line-chart fa-navbar"></i></a>
         <a href="#overlay-new-player" toggle="on" class="btn btn-navbar"><i class="fa fa-plus fa-navbar"></i><i class="fa fa-user fa-navbar"></i></a>
     </div>
+
     <div ng-if="user">
         <div class="list-group" id='messagesList' content-for="chatSidebar">
             <div class="list-group-item">
@@ -120,9 +140,8 @@
                 </div>
             </div>
             <div class="list-group-item" ng-repeat='msg in messages | orderBy:chatPredicate:reverse'>
-                <span class="label label-info">{{msg.time}}</span>
-                <br />
-                <strong>{{msg.name}}</strong> - {{msg.text}}
+                <strong>{{msg.name}}</strong>: {{msg.text}}<br />
+                <span class="btn btn-xs btn-default" disabled="disabled"><small>{{msg.time}}</small></span>
             </div>
             <div class="list-group-item text-center">
                 <div>

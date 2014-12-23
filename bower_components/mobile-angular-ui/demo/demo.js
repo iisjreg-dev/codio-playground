@@ -284,22 +284,24 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
         //CAHT REF
         var chatRef = new Firebase("https://iisjreg-playground.firebaseio.com/scores3/" + params.playID + "/chat");
         var messages = $firebase(chatRef).$asArray();
+        var myFriendsRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + $scope.user.uid + "/friends");
+        var friends = $firebase(myFriendsRef).$asArray();
+        friends.$loaded().then(function() {
+            $scope.friends = friends;
+            console.log("score3 friends loaded: " + friends.length);
+            //console.log(friends);
+        });
+        messages.$loaded().then(function() {
+            $scope.messages = messages;
+            $scope.numberOfMessages = messages.length;
+        });
         players.$loaded().then(function() {
             console.log(players.length + " players in play");
             var numberOfPlayers = players.length;
-            playerRef.on("child_removed", function(snapshot) {
-                var deletedPost = snapshot.val();
-                console.log("Player '" + deletedPost.playerName + "' has been deleted");
-                numberOfPlayers -= 1;
-            });
             $scope.scorePredicate = "-playerScore";
             $scope.chatPredicate = '-ISOtime';
             $scope.numberOfPlayers = numberOfPlayers;
             $scope.players = players;
-            messages.$loaded().then(function() {
-                $scope.messages = messages;
-                $scope.numberOfMessages = messages.length;
-            });
             //
             //functions
             //
@@ -325,22 +327,71 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                 });
                 $scope.playerName = "";
             }
+            $scope.addFriendPlayer = function() {
+                var time = new Date();
+                //console.log("update time");
+                play.time = time.toUTCString();
+                play.ISOtime = time.toISOString();
+                play.numberOfPlayers += 1;
+                play.$save();
+                var friend = $scope.addFriend;
+                var friendColor = "";
+                var friendName = "";
+                var friendUserRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + friend.$id);
+                friendUserRef.once('value', function(dataSnapshot) {
+                    //console.log("get user details");
+                    friendColor = dataSnapshot.child("details").child("favouriteColor").val();
+                    friendName = dataSnapshot.child("details").child("name").val();
+                    //console.log(friendColor);
+                    numberOfPlayers += 1;
+                    $scope.players.$add({
+                        userUid: friend.$id,
+                        playerName: friendName.substr(0, 13),
+                        playerScore: 0,
+                        turnOrder: 0,
+                        tempScore: "",
+                        history: "",
+                        color: friendColor
+                    });
+                    console.log(friendName + "added");
+                });
+            }
+            $scope.addUserPlayer = function() {
+                var time = new Date();
+                //console.log("update time");
+                play.time = time.toUTCString();
+                play.ISOtime = time.toISOString();
+                play.numberOfPlayers += 1;
+                play.$save();
+                numberOfPlayers += 1;
+                var name = $scope.userDetails.name;
+                $scope.players.$add({
+                    userUid: $scope.user.uid,
+                    playerName: name.substr(0, 13),
+                    playerScore: 0,
+                    turnOrder: 0,
+                    tempScore: "",
+                    history: "",
+                    color: $scope.userDetails.favouriteColor
+                });
+                console.log("added user");
+            }
             $scope.addMessage = function() {
                 var time = new Date();
                 console.log("msg");
                 console.log(time);
-                console.log($scope.msg);
+                console.log($scope);
+                console.log($scope.$$childTail.msg);
                 console.log($scope.user.uid);
                 console.log($scope.userDetails.name);
                 $scope.messages.$add({
                     name: $scope.userDetails.name,
-                    text: $scope.msg,
+                    text: $scope.$$childTail.msg,
                     time: time.toUTCString(),
                     ISOtime: time.toISOString()
                 });
                 //RESET MESSAGE
-                $scope.msg = "";
-                //}
+                $scope.$$childTail.msg = "";
             }
             $scope.changeColor = function(player) {
                 var colors = ["blue", "red", "yellow", "green", "orange"];
@@ -370,7 +421,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
             function finalupdate(player, update) {
                 $rootScope.toggle('overlay-' + player.$id, 'off');
                 var time = new Date();
-                console.log("update time");
+                //console.log("update time");
                 play.time = time.toUTCString();
                 play.ISOtime = time.toISOString();
                 play.$save();
@@ -386,7 +437,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                     newHistory = newHistory.substr(0, maxHistory).concat("...");
                 }
                 player.history = newHistory;
-                console.log(player.history);
+                //console.log(player.history);
                 players.$save(player).then(function() {
                     // data has been saved to Firebase
                     console.log(" -> successful");
