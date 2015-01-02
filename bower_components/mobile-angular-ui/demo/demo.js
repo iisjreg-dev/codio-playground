@@ -126,12 +126,12 @@ app.controller('FriendsController', function($rootScope, $scope, $firebase, $loc
                 //CHECK EACH USER'S EMAIL
                 var friendEmail = childSnapshot.child("password").child("email").val();
                 var friendName = childSnapshot.child("details").child("name").val();
-                console.log("1" + friendEmail);
-                console.log("2" + friendName);
+                console.log("1 " + friendEmail);
+                console.log("2 " + friendName);
                 if(friendEmail == $scope.friendEmail) {
-                    console.log("3" + "match! " + friendEmail);
+                    console.log("3 " + "match! " + friendEmail);
                     var friend = childSnapshot.val(); //FRIEND USER OBJECT
-                    console.log("4" + friend);
+                    console.log("4 " + friend);
                     var friendsListRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + $scope.user.uid + "/friends/" + friend.uid); //ADD CHILD FOR FRIEND UID
                     friendsListRef.set({
                         email: friendEmail, //EMAIL OF FRIEND
@@ -140,12 +140,12 @@ app.controller('FriendsController', function($rootScope, $scope, $firebase, $loc
                         requestSent: time.toUTCString()
                     });
                     //UPDATE FRIEND'S FRIEND LIST
-                    console.log("5" + friend.uid); //FRIEND'S UID
+                    console.log("5 " + friend.uid); //FRIEND'S UID
                     var otherFriendsListRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + friend.uid + "/friends/" + $scope.user.uid); //ADD CHILD FOR CURRENT USER UID
                     var email = $scope.user.password.email; //CURRENT USER'S EMAIL
                     var name = $scope.userDetails.name; //CURRENT USER'S NAME
-                    console.log("6" + email);
-                    console.log("7" + name);
+                    console.log("6 " + email);
+                    console.log("7 " + name);
                     otherFriendsListRef.set({
                         email: email,
                         name: name,
@@ -263,7 +263,7 @@ app.controller('ScoreController2', function($rootScope, $scope, $firebase) {
         }
     });
 });
-app.controller('ScoreController3', function($rootScope, $scope, $firebase, $routeParams) {
+app.controller('ScoreController3', function($rootScope, $scope, $firebase, $routeParams, $location, $window) {
     //SCORE TESTING - n Players
     //
     //add score history & plays (instances of a game)
@@ -315,6 +315,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                 var colors = ["blue", "red", "yellow", "green", "orange"];
                 var newColor = $scope.color || colors[Math.floor(Math.random() * colors.length)];
                 numberOfPlayers += 1;
+                $scope.numberOfPlayers = numberOfPlayers;
                 var playerName = $scope.playerName || 'anonymous';
                 console.log(playerName);
                 $scope.players.$add({
@@ -344,6 +345,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                     friendName = dataSnapshot.child("details").child("name").val();
                     //console.log(friendColor);
                     numberOfPlayers += 1;
+                    $scope.numberOfPlayers = numberOfPlayers;
                     $scope.players.$add({
                         userUid: friend.$id,
                         playerName: friendName.substr(0, 13),
@@ -364,6 +366,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                 play.numberOfPlayers += 1;
                 play.$save();
                 numberOfPlayers += 1;
+                $scope.numberOfPlayers = numberOfPlayers;
                 var name = $scope.userDetails.name;
                 $scope.players.$add({
                     userUid: $scope.user.uid,
@@ -457,6 +460,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
         var plays = $firebase(ref).$asArray();
         plays.$loaded().then(function() {
             //console.log(plays.length + " current games");
+            console.log("ref.key(): " + ref.key());
             var numberOfPlays = plays.length;
             ref.on("child_removed", function(snapshot) {
                 var deletedPost = snapshot.val();
@@ -479,6 +483,10 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                     time: time.toUTCString(),
                     ISOtime: time.toISOString(),
                     numberOfPlayers: 0
+                }).then(function(ref) {
+                    var id = ref.key();
+                    console.log("added record with id " + id);
+                    $window.location.href = "#/score4/plays/" + id;
                 });
             }
         });

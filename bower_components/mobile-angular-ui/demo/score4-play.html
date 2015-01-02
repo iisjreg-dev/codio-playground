@@ -3,6 +3,16 @@
         <div ng-hide="user" class="text-center">
             <a href="#overlay-login" toggle="on" class="btn btn-standard"><i class="fa fa-sign-in"></i> Sign in / Register</a>
         </div>
+        <div ng-hide="numberOfPlayers">
+            <div class="panel panel-success">
+                <div class="panel-body text-center">
+                    Game created
+                    <form class="form-inline" role="form">
+                            <a class="btn btn-primary form-control" ng-click="addUserPlayer()">Add me to game</a>
+                    </form>
+                </div>
+            </div>
+        </div>
         <div ng-if="user">
             <div class="list-group-item media container" ng-repeat="player in players | orderBy:scorePredicate:reverse">
                 <!-- new layout: minus | score (name below) | plus -->
@@ -84,29 +94,32 @@
                     </div>
                 </form>
             </div>
-        </div><p><div class="panel panel-success">
-            <div class="panel-heading">Add friend</div>
-            <div class="panel-body">
-                <form class="form-inline" role="form">
-                    <div class="btn-group-vertical" role="group">
-                        <select ng-model="addFriend" ng-options="friend.name for friend in friends"></select>
-                        <a class="btn btn-primary form-control" ng-click="addFriendPlayer()" toggle="off" bubble target="overlay-new-player">Add</a>
-                    </div>
-                </form>
-            </div>
-        </div><p>
-        <div class="panel panel-success">
-            <div class="panel-heading">Add new player (13 Character limit)</div>
-            <div class="panel-body">
-                <form class="form-inline" role="form">
-                    <div class="btn-group-vertical" role="group">
-                        <input type='text' ng-model='playerName' id='playerName' placeholder='Player Name' class="form-control" maxlength=13>
-                        <input label="Player Colour" type="color" id="color" ng-model='color' class="form-control">
-                        <a class="btn btn-primary form-control" ng-click="addPlayer()" toggle="off" bubble target="overlay-new-player">Add</a>
-                    </div>
-                </form>
-            </div>
         </div>
+        <p>
+            <div class="panel panel-success">
+                <div class="panel-heading">Add friend</div>
+                <div class="panel-body">
+                    <form class="form-inline" role="form">
+                        <div class="btn-group-vertical" role="group">
+                            <select ng-model="addFriend" ng-options="friend.name for friend in friends"></select>
+                            <a class="btn btn-primary form-control" ng-click="addFriendPlayer()" toggle="off" bubble target="overlay-new-player">Add</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <p>
+                <div class="panel panel-success">
+                    <div class="panel-heading">Add new player (13 Character limit)</div>
+                    <div class="panel-body">
+                        <form class="form-inline" role="form">
+                            <div class="btn-group-vertical" role="group">
+                                <input type='text' ng-model='playerName' id='playerName' placeholder='Player Name' class="form-control" maxlength=13>
+                                <input label="Player Colour" type="color" id="color" ng-model='color' class="form-control">
+                                <a class="btn btn-primary form-control" ng-click="addPlayer()" toggle="off" bubble target="overlay-new-player">Add</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
     </div>
 
     <div overlay="overlay-info">
@@ -140,7 +153,8 @@
                 </div>
             </div>
             <div class="list-group-item" ng-repeat='msg in messages | orderBy:chatPredicate:reverse'>
-                <strong>{{msg.name}}</strong>: {{msg.text}}<br />
+                <strong>{{msg.name}}</strong>: {{msg.text}}
+                <br />
                 <span class="btn btn-xs btn-default" disabled="disabled"><small>{{msg.time}}</small></span>
             </div>
             <div class="list-group-item text-center">

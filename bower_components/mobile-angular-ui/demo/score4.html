@@ -5,19 +5,22 @@
         </div>
         <div ng-if="user">
             <div class="list-group">
-                <div class="list-group-item media">
-                    <div class="pull-right">
-                        <a class="btn btn-default" href="#overlay-new-play" toggle="on">New Game</a>
+                <div class="list-group-item">
+                    <div class="text-center">
+                        <a class="btn btn-info" href="#overlay-new-play" toggle="on">Start New Game</a>
                     </div>
-                    <div class="media-body">
-                        <h4>Please select a game</h4>
+                </div>
+                <div class="list-group-item">
+                    <div class="text-center">
+                        Previous games:
                     </div>
                 </div>
                 <div class="list-group-item" ng-repeat="play in plays | filter:{creatorUid: user.uid}">
-                    <a href="#/score4/plays/{{play.$id}}">
-                    {{play.gameName}}<br />(<i>{{play.time}}</i>)
+                    <a href="#/score4/plays/{{play.$id}}" class="text-capitalize">
+                    {{play.gameName}}<br />
+                        <span class="btn btn-xs btn-default" disabled="disabled"><small>{{play.time}}</small></span>
                     <div class="pull-right">
-                        <i class="fa fa-users"></i> x{{play.numberOfPlayers}} <i class="fa fa-chevron-right"></i>
+                        <i class="fa fa-users"></i> x{{play.numberOfPlayers}}&nbsp;&nbsp;&nbsp;<i class="fa fa-chevron-right"></i>
                     </div>
                 </a>
                 </div>
