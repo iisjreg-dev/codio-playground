@@ -7,6 +7,9 @@ app.factory("Auth", ["$firebaseAuth",
 ]);
 app.config(function($routeProvider, $locationProvider) {
     $routeProvider.when('/', {
+        templateUrl: "score4.html"
+    });
+    $routeProvider.when('/about', {
         templateUrl: "home.html"
     });
     $routeProvider.when('/scroll', {
@@ -104,13 +107,19 @@ app.controller('FriendsController', function($rootScope, $scope, $firebase, $loc
     //STATUSES: APPROVED, REJECTED, WAITING (for requestee), PENDING (for requester)
     //
     //
-    console.log("friends...");
-    var myFriendsRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + $scope.user.uid + "/friends");
-    var friends = $firebase(myFriendsRef).$asArray();
-    friends.$loaded().then(function() {
-        $scope.friends = friends;
-    });
-    $scope.add = {};
+    //var myFriendsRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + $scope.user.uid + "/friends");
+    //var friends = $firebase(myFriendsRef).$asArray();
+    //friends.$loaded().then(function() {
+    //    $scope.friends = friends;
+    //});
+    if($scope.user) {
+        var myFriendRequestsRef = new Firebase("https://iisjreg-playground.firebaseio.com/friends/" + $scope.user.uid);
+        var friendRequests = $firebase(myFriendRequestsRef).$asArray();
+        friendRequests.$loaded().then(function() {
+            $scope.friendRequests = friendRequests;
+        });
+        $scope.add = {};
+    }
     $scope.addFriend = function() {
         $scope.add.error = "";
         console.log("add friend " + $scope.friendEmail);
@@ -130,18 +139,18 @@ app.controller('FriendsController', function($rootScope, $scope, $firebase, $loc
                 console.log("2 " + friendName);
                 if(friendEmail == $scope.friendEmail) {
                     console.log("3 " + "match! " + friendEmail);
-                    var friend = childSnapshot.val(); //FRIEND USER OBJECT
-                    console.log("4 " + friend);
-                    var friendsListRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + $scope.user.uid + "/friends/" + friend.uid); //ADD CHILD FOR FRIEND UID
+                    var newFriend = childSnapshot.val(); //FRIEND USER OBJECT
+                    console.log("4 " + newFriend);
+                    var friendsListRef = new Firebase("https://iisjreg-playground.firebaseio.com/friends/" + $scope.user.uid + "/" + newFriend.uid); //ADD CHILD FOR FRIEND UID
                     friendsListRef.set({
                         email: friendEmail, //EMAIL OF FRIEND
                         name: friendName, //NAME OF FRIEND
                         status: "PENDING",
                         requestSent: time.toUTCString()
                     });
-                    //UPDATE FRIEND'S FRIEND LIST
-                    console.log("5 " + friend.uid); //FRIEND'S UID
-                    var otherFriendsListRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + friend.uid + "/friends/" + $scope.user.uid); //ADD CHILD FOR CURRENT USER UID
+                    //UPDATE FRIEND'S FRIEND REQUESTS LIST
+                    console.log("5 " + newFriend.uid); //FRIEND'S UID
+                    var otherFriendsListRef = new Firebase("https://iisjreg-playground.firebaseio.com/friends/" + newFriend.uid + "/" + $scope.user.uid); //ADD CHILD FOR CURRENT USER UID
                     var email = $scope.user.password.email; //CURRENT USER'S EMAIL
                     var name = $scope.userDetails.name; //CURRENT USER'S NAME
                     console.log("6 " + email);
@@ -166,20 +175,20 @@ app.controller('FriendsController', function($rootScope, $scope, $firebase, $loc
     }
     $scope.processRequest = function(approved, requester) {
         var newStatus = "";
-        if(approved == true) {
+        if(approved) {
             newStatus = "APPROVED";
         }
-        if(approved == false) {
+        if(!approved) {
             newStatus = "REJECTED";
         }
         //console.log("requester.$id " + request.$id + " " + request.status)
-        var FriendsListRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + $scope.user.uid + "/friends/" + requester.$id);
-        FriendsListRef.update({
+        var FriendRequestsListRef = new Firebase("https://iisjreg-playground.firebaseio.com/friends/" + $scope.user.uid + "/" + requester.$id);
+        FriendRequestsListRef.update({
             status: newStatus
         });
         console.log("current user updated");
-        var otherFriendsListRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + requester.$id + "/friends/" + $scope.user.uid);
-        otherFriendsListRef.update({
+        var otherFriendRequestsListRef = new Firebase("https://iisjreg-playground.firebaseio.com/friends/" + requester.$id + "/" + $scope.user.uid);
+        otherFriendRequestsListRef.update({
             status: newStatus
         });
         console.log("updated other user");
@@ -269,227 +278,259 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
     //add score history & plays (instances of a game)
     //
     //
+    $rootScope.loading = true;
     var timer = [];
     var params = $routeParams;
-    if(params.playID) {
-        //show individual play
-        console.log("params playID = " + params.playID);
-        //PLAY REF
-        var playRef = new Firebase("https://iisjreg-playground.firebaseio.com/scores3/" + params.playID);
-        var play = $firebase(playRef).$asObject();
-        $scope.play = play;
-        //PLAYERS REF
-        var playerRef = new Firebase("https://iisjreg-playground.firebaseio.com/scores3/" + params.playID + "/players");
-        var players = $firebase(playerRef).$asArray();
-        //CAHT REF
-        var chatRef = new Firebase("https://iisjreg-playground.firebaseio.com/scores3/" + params.playID + "/chat");
-        var messages = $firebase(chatRef).$asArray();
-        var myFriendsRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + $scope.user.uid + "/friends");
-        var friends = $firebase(myFriendsRef).$asArray();
-        friends.$loaded().then(function() {
-            $scope.friends = friends;
-            console.log("score3 friends loaded: " + friends.length);
-            //console.log(friends);
-        });
-        messages.$loaded().then(function() {
-            $scope.messages = messages;
-            $scope.numberOfMessages = messages.length;
-        });
-        players.$loaded().then(function() {
-            console.log(players.length + " players in play");
-            var numberOfPlayers = players.length;
-            $scope.scorePredicate = "-playerScore";
-            $scope.chatPredicate = '-ISOtime';
-            $scope.numberOfPlayers = numberOfPlayers;
-            $scope.players = players;
-            //
-            //functions
-            //
-            $scope.addPlayer = function() {
-                var time = new Date();
-                console.log("update time");
-                play.time = time.toUTCString();
-                play.ISOtime = time.toISOString();
-                play.numberOfPlayers += 1;
-                play.$save();
-                var colors = ["blue", "red", "yellow", "green", "orange"];
-                var newColor = $scope.color || colors[Math.floor(Math.random() * colors.length)];
-                numberOfPlayers += 1;
+    if($scope.user) {
+        if(params.playID) {
+            //show individual play
+            console.log("params playID = " + params.playID);
+            //PLAY REF
+            var playRef = new Firebase("https://iisjreg-playground.firebaseio.com/plays/" + params.playID);
+            var play = $firebase(playRef).$asObject();
+            $scope.play = play;
+            //PLAYERS REF
+            var playerRef = new Firebase("https://iisjreg-playground.firebaseio.com/plays/" + params.playID + "/players");
+            var players = $firebase(playerRef).$asArray();
+            //CAHT REF
+            var chatRef = new Firebase("https://iisjreg-playground.firebaseio.com/plays/" + params.playID + "/chat");
+            var messages = $firebase(chatRef).$asArray();
+            var myFriendsRef = new Firebase("https://iisjreg-playground.firebaseio.com/friends/" + $scope.user.uid);
+            var friends = $firebase(myFriendsRef).$asArray();
+            friends.$loaded().then(function() {
+                $scope.friends = friends;
+                console.log("score3 friends loaded: " + friends.length);
+                //console.log(friends);
+            });
+            messages.$loaded().then(function() {
+                $scope.messages = messages;
+                $scope.numberOfMessages = messages.length;
+            });
+            players.$loaded().then(function() {
+                $rootScope.loading = false;
+                console.log(players.length + " players in play");
+                var numberOfPlayers = players.length;
+                $scope.scorePredicate = "-playerScore";
+                $scope.chatPredicate = '-ISOtime';
                 $scope.numberOfPlayers = numberOfPlayers;
-                var playerName = $scope.playerName || 'anonymous';
-                console.log(playerName);
-                $scope.players.$add({
-                    playerName: playerName.substr(0, 13),
-                    playerScore: 0,
-                    turnOrder: 0,
-                    tempScore: "",
-                    history: "",
-                    color: newColor
-                });
-                $scope.playerName = "";
-            }
-            $scope.addFriendPlayer = function() {
-                var time = new Date();
-                //console.log("update time");
-                play.time = time.toUTCString();
-                play.ISOtime = time.toISOString();
-                play.numberOfPlayers += 1;
-                play.$save();
-                var friend = $scope.addFriend;
-                var friendColor = "";
-                var friendName = "";
-                var friendUserRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + friend.$id);
-                friendUserRef.once('value', function(dataSnapshot) {
-                    //console.log("get user details");
-                    friendColor = dataSnapshot.child("details").child("favouriteColor").val();
-                    friendName = dataSnapshot.child("details").child("name").val();
-                    //console.log(friendColor);
+                $scope.players = players;
+                //
+                //functions
+                //
+                $scope.addPlayer = function() {
+                    var time = new Date();
+                    console.log("update time");
+                    play.time = time.toUTCString();
+                    play.ISOtime = time.toISOString();
+                    play.numberOfPlayers += 1;
+                    play.$save();
+                    var colors = ["blue", "red", "yellow", "green", "orange"];
+                    var newColor = $scope.color || colors[Math.floor(Math.random() * colors.length)];
                     numberOfPlayers += 1;
                     $scope.numberOfPlayers = numberOfPlayers;
+                    var playerName = $scope.playerName || 'anonymous';
+                    console.log(playerName);
                     $scope.players.$add({
-                        userUid: friend.$id,
-                        playerName: friendName.substr(0, 13),
+                        playerName: playerName.substr(0, 13),
                         playerScore: 0,
                         turnOrder: 0,
                         tempScore: "",
                         history: "",
-                        color: friendColor
+                        color: newColor
                     });
-                    console.log(friendName + "added");
-                });
-            }
-            $scope.addUserPlayer = function() {
-                var time = new Date();
-                //console.log("update time");
-                play.time = time.toUTCString();
-                play.ISOtime = time.toISOString();
-                play.numberOfPlayers += 1;
-                play.$save();
-                numberOfPlayers += 1;
-                $scope.numberOfPlayers = numberOfPlayers;
-                var name = $scope.userDetails.name;
-                $scope.players.$add({
-                    userUid: $scope.user.uid,
-                    playerName: name.substr(0, 13),
-                    playerScore: 0,
-                    turnOrder: 0,
-                    tempScore: "",
-                    history: "",
-                    color: $scope.userDetails.favouriteColor
-                });
-                console.log("added user");
-            }
-            $scope.addMessage = function() {
-                var time = new Date();
-                console.log("msg");
-                console.log(time);
-                console.log($scope);
-                console.log($scope.$$childTail.msg);
-                console.log($scope.user.uid);
-                console.log($scope.userDetails.name);
-                $scope.messages.$add({
-                    name: $scope.userDetails.name,
-                    text: $scope.$$childTail.msg,
-                    time: time.toUTCString(),
-                    ISOtime: time.toISOString()
-                });
-                //RESET MESSAGE
-                $scope.$$childTail.msg = "";
-            }
-            $scope.changeColor = function(player) {
-                var colors = ["blue", "red", "yellow", "green", "orange"];
-                var newColor = colors[Math.floor(Math.random() * colors.length)];
-                console.log("change color of " + player.playerName + " to " + newColor);
-                player.color = newColor;
-                players.$save(player).then(function() {
-                    // data has been saved to Firebase
-                    console.log(" -> successful");
-                });
-            }
-            $scope.updateScore = function(player, update) {
-                var playerNum = players.$indexFor(player.$id);
-                clearTimeout(timer[playerNum]); //ONE TIMER PER PLAYER
-                player.tempScore = Number(player.tempScore) + update;
-                wait(playerNum, function() {
-                    finalupdate(player, player.tempScore);
-                    player.tempScore = "";
-                    players.$save(player);
-                }, 3000);
-            }
-
-            function wait(ref, func, time) {
-                timer[ref] = setTimeout(func, time); //PROBABLY NOT NECESSARY
-            }
-
-            function finalupdate(player, update) {
-                $rootScope.toggle('overlay-' + player.$id, 'off');
-                var time = new Date();
-                //console.log("update time");
-                play.time = time.toUTCString();
-                play.ISOtime = time.toISOString();
-                play.$save();
-                var newScore = player.playerScore + Number(update);
-                console.log("Player " + player.playerName + ", " + update + " = " + newScore);
-                player.playerScore = newScore;
-                var maxHistory = 16;
-                var newHistory = update.toString();
-                if(player.history.length > 0) {
-                    newHistory = newHistory + ", " + player.history;
+                    $scope.playerName = "";
                 }
-                if(player.history.length >= maxHistory) {
-                    newHistory = newHistory.substr(0, maxHistory).concat("...");
-                }
-                player.history = newHistory;
-                //console.log(player.history);
-                players.$save(player).then(function() {
-                    // data has been saved to Firebase
-                    console.log(" -> successful");
+                $scope.addFriendPlayer = function() {
                     var time = new Date();
-                    var playerScoreRef = playerRef.child(player.$id + "/scores");
-                    playerScoreRef.push({
-                        score: newScore,
-                        time: time.toUTCString()
+                    //console.log("update time");
+                    play.time = time.toUTCString();
+                    play.ISOtime = time.toISOString();
+                    play.numberOfPlayers += 1;
+                    play.$save();
+                    var friend = $scope.addFriend;
+                    var friendColor = "";
+                    var friendName = "";
+                    var friendUserRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + friend.$id);
+                    friendUserRef.once('value', function(dataSnapshot) {
+                        //console.log("get user details");
+                        friendColor = dataSnapshot.child("details").child("favouriteColor").val();
+                        friendName = dataSnapshot.child("details").child("name").val();
+                        //console.log(friendColor);
+                        numberOfPlayers += 1;
+                        $scope.numberOfPlayers = numberOfPlayers;
+                        $scope.players.$add({
+                            userUid: friend.$id,
+                            playerName: friendName.substr(0, 13),
+                            playerScore: 0,
+                            turnOrder: 0,
+                            tempScore: "",
+                            history: "",
+                            color: friendColor
+                        });
+                        console.log(friendName + "added");
+                        var accessRef = new Firebase("https://iisjreg-playground.firebaseio.com/play-access/" + friend.$id + "/" + play.$id);
+                        accessRef.set({
+                            time: time.toUTCString()
+                        });
+                        console.log("added access record");
+                    });
+                }
+                $scope.addUserPlayer = function() {
+                    var time = new Date();
+                    //console.log("update time");
+                    play.time = time.toUTCString();
+                    play.ISOtime = time.toISOString();
+                    play.numberOfPlayers += 1;
+                    play.$save();
+                    numberOfPlayers += 1;
+                    $scope.numberOfPlayers = numberOfPlayers;
+                    var name = $scope.userDetails.name;
+                    $scope.players.$add({
+                        userUid: $scope.user.uid,
+                        playerName: name.substr(0, 13),
+                        playerScore: 0,
+                        turnOrder: 0,
+                        tempScore: "",
+                        history: "",
+                        color: $scope.userDetails.favouriteColor
+                    });
+                    console.log("added user");
+                }
+                $scope.addMessage = function() {
+                    var time = new Date();
+                    console.log("msg");
+                    console.log(time);
+                    console.log($scope);
+                    console.log($scope.$$childTail.msg);
+                    console.log($scope.user.uid);
+                    console.log($scope.userDetails.name);
+                    $scope.messages.$add({
+                        name: $scope.userDetails.name,
+                        text: $scope.$$childTail.msg,
+                        time: time.toUTCString(),
+                        ISOtime: time.toISOString()
+                    });
+                    //RESET MESSAGE
+                    $scope.$$childTail.msg = "";
+                }
+                $scope.changeColor = function(player) {
+                    var colors = ["blue", "red", "yellow", "green", "orange"];
+                    var newColor = colors[Math.floor(Math.random() * colors.length)];
+                    console.log("change color of " + player.playerName + " to " + newColor);
+                    player.color = newColor;
+                    players.$save(player).then(function() {
+                        // data has been saved to Firebase
+                        console.log(" -> successful");
+                    });
+                }
+                $scope.updateScore = function(player, update) {
+                    var playerNum = players.$indexFor(player.$id);
+                    clearTimeout(timer[playerNum]); //ONE TIMER PER PLAYER
+                    player.tempScore = Number(player.tempScore) + update;
+                    wait(playerNum, function() {
+                        finalupdate(player, playerNum, player.tempScore);
+                        player.tempScore = "";
+                        players.$save(player);
+                    }, 3000);
+                }
+
+                function wait(ref, func, time) {
+                    timer[ref] = setTimeout(func, time); 
+                }
+
+                function finalupdate(player, playerNum, update) {
+                    $rootScope.toggle('overlay-' + player.$id, 'off');
+                    var time = new Date();
+                    //console.log("update time");
+                    play.time = time.toUTCString();
+                    play.ISOtime = time.toISOString();
+                    play.$save();
+                    var newScore = player.playerScore + Number(update);
+                    console.log("Player " + player.playerName + ", " + update + " = " + newScore);
+                    player.playerScore = newScore;
+                    var maxHistory = 16;
+                    var newHistory = update.toString();
+                    if(player.history.length > 0) {
+                        newHistory = newHistory + ", " + player.history;
+                    }
+                    if(player.history.length >= maxHistory) {
+                        newHistory = newHistory.substr(0, maxHistory).concat("...");
+                    }
+                    player.history = newHistory;
+                    //console.log(player.history);
+                    players.$save(player).then(function() {
+                        // data has been saved to Firebase
+                        console.log(" -> successful");
+                        clearTimeout(timer[playerNum]);
+                        var time = new Date();
+                        var playerScoreRef = playerRef.child(player.$id + "/scores");
+                        playerScoreRef.push({
+                            score: newScore,
+                            time: time.toUTCString()
+                        });
+                    });
+                }
+            });
+        } else {
+            //show all plays
+            console.log("no params");
+            var ref = new Firebase("https://iisjreg-playground.firebaseio.com/play-access/" + $scope.user.uid);
+            var availablePlays = $firebase(ref).$asArray();
+            availablePlays.$loaded().then(function() {
+                $rootScope.loading = false;
+                //TODO: for each available play, load play data into array
+                var playsToShow = {};
+                var playCount = 0;
+                /////////////////
+                ref.once('value', function(dataSnapshot) {
+                    dataSnapshot.forEach(function(childSnapshot) {
+                        //EACH PLAY
+                        var playId = childSnapshot.key();
+                        console.log("playId: " + playId);
+                        var playRef = new Firebase("https://iisjreg-playground.firebaseio.com/plays/" + playId);
+                        var sync = $firebase(playRef);
+                        var playSync = sync.$asObject();
+                        playsToShow[playCount] = playSync;
+                        playCount += 1;
+                        console.log("playCount: " + playCount);
                     });
                 });
-            }
-        });
-    } else {
-        //show all plays
-        console.log("no params");
-        var ref = new Firebase("https://iisjreg-playground.firebaseio.com/scores3");
-        var plays = $firebase(ref).$asArray();
-        plays.$loaded().then(function() {
-            //console.log(plays.length + " current games");
-            console.log("ref.key(): " + ref.key());
-            var numberOfPlays = plays.length;
-            ref.on("child_removed", function(snapshot) {
-                var deletedPost = snapshot.val();
-                console.log("PlayID '" + deletedPost.$id + "' has been deleted");
-                numberOfPlays -= 1;
+                ////////////////
+                $scope.playCount = playCount;
+                $scope.playsToShow = playsToShow;
+                //$scope.availablePlays = availablePlays;
+                $scope.addPlay = function() {
+                    //numberOfPlays += 1;
+                    var playsRef = new Firebase("https://iisjreg-playground.firebaseio.com/plays/");
+                    var plays = $firebase(playsRef).$asArray();
+                    var gameName = $scope.gameName || 'anonymous';
+                    var time = new Date();
+                    //ADD TO FIREBASE
+                    console.log(gameName);
+                    console.log(time);
+                    console.log($scope.user.uid);
+                    plays.$add({
+                        gameName: gameName,
+                        creatorUid: $scope.user.uid,
+                        time: time.toUTCString(),
+                        ISOtime: time.toISOString(),
+                        numberOfPlayers: 0
+                    }).then(function(ref) {
+                        var id = ref.key();
+                        console.log("added record with id " + id);
+                        var accessRef = new Firebase("https://iisjreg-playground.firebaseio.com/play-access/" + $scope.user.uid + "/" + id);
+                        accessRef.set({
+                            time: time.toUTCString()
+                        });
+                        console.log("added access record");
+                        $window.location.href = "#/score4/plays/" + id;
+                    });
+                }
             });
-            $scope.numberOfPlays = numberOfPlays;
-            $scope.plays = plays;
-            $scope.addPlay = function() {
-                numberOfPlays += 1;
-                var gameName = $scope.gameName || 'anonymous';
-                var time = new Date();
-                //ADD TO FIREBASE
-                console.log(gameName);
-                console.log(time);
-                console.log($scope.user.uid);
-                $scope.plays.$add({
-                    gameName: gameName,
-                    creatorUid: $scope.user.uid,
-                    time: time.toUTCString(),
-                    ISOtime: time.toISOString(),
-                    numberOfPlayers: 0
-                }).then(function(ref) {
-                    var id = ref.key();
-                    console.log("added record with id " + id);
-                    $window.location.href = "#/score4/plays/" + id;
-                });
-            }
-        });
+        }
+    }
+    else{
+        $rootScope.loading = false;
     }
 });
 app.controller('historyController', function($rootScope, $scope, $firebase, $routeParams) {
@@ -501,11 +542,11 @@ app.controller('historyController', function($rootScope, $scope, $firebase, $rou
         var testdata = new google.visualization.DataTable();
         //show individual play
         console.log("params playID = " + params.playID);
-        var playRef = new Firebase("https://iisjreg-playground.firebaseio.com/scores3/" + params.playID);
+        var playRef = new Firebase("https://iisjreg-playground.firebaseio.com/plays/" + params.playID);
         var play = $firebase(playRef).$asObject();
         //play.$bindTo($scope, "play");
         $scope.play = play;
-        var playerRef = new Firebase("https://iisjreg-playground.firebaseio.com/scores3/" + params.playID + "/players");
+        var playerRef = new Firebase("https://iisjreg-playground.firebaseio.com/plays/" + params.playID + "/players");
         var players = $firebase(playerRef).$asArray();
         players.$loaded().then(function() {
             console.log(players.length + " players in play");
@@ -631,7 +672,12 @@ app.controller('MainController', function($rootScope, $scope, $firebase, $window
     $scope.logout = function() {
         console.log("login");
         $scope.auth.$unauth();
+        $window.location.href = "#/";
         $window.location.reload();
+    }
+    $scope.displayNewAccountForm = function() {
+        $rootScope.toggle('overlay-login', 'off');
+        $rootScope.toggle('overlay-create-new-acc', 'on');
     }
     $scope.newAccount = function() {
         var isNewUser = true;
