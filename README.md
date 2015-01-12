@@ -1,4 +1,4 @@
-# Playground
+# Playground (currently working on Pointi - score keeping)
 
 ## Containing:
 

@@ -1,0 +1,19 @@
+{
+  "rules": {
+    "users": {
+      "$user_id": {
+        // grants write access to the owner of this user account
+        // whose uid must exactly match the key ($user_id)
+        ".write": "$user_id === auth.uid",
+        ".read": true
+      }
+    },
+  
+    "scores3": {
+      "$play": {
+        // grants read access to the creator of this play
+        ".read": "data.child('/creatorUid').val() === auth.uid"//"$user_id === auth.uid"
+      }
+    }
+  }
+}
