@@ -1,7 +1,7 @@
 var app = angular.module('MobileAngularUiExamples', ["ngRoute", "ngTouch", "mobile-angular-ui", "firebase", "googlechart"]);
 app.factory("Auth", ["$firebaseAuth",
     function($firebaseAuth) {
-        var authRef = new Firebase("https://iisjreg-playground.firebaseio.com/users");
+        var authRef = new Firebase("https://pointi.firebaseio.com/users");
         return $firebaseAuth(authRef);
     }
 ]);
@@ -67,7 +67,7 @@ app.config(function($routeProvider, $locationProvider) {
 app.controller('ChatController', function($rootScope, $scope, $firebase) {
     //CHAT TESTING
     //CREATE A FIREBASE REFERENCE
-    var ref = new Firebase("https://iisjreg-playground.firebaseio.com/chat");
+    var ref = new Firebase("https://pointi.firebaseio.com/chat");
     // GET MESSAGES AS AN ARRAY
     $scope.messages = $firebase(ref).$asArray();
     $scope.predicate = '-ISOtime';
@@ -96,7 +96,7 @@ app.controller('ChatController', function($rootScope, $scope, $firebase) {
 app.controller('UserController', function($rootScope, $scope, $firebase, $location) {
     //USER TESTING
     //CREATE A FIREBASE REFERENCE
-    //var usersRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + $scope.auth.uid);
+    //var usersRef = new Firebase("https://pointi.firebaseio.com/users/" + $scope.auth.uid);
     //var user = $firebase(usersRef).$asObject();
     //$scope.user = user;
 });
@@ -107,13 +107,13 @@ app.controller('FriendsController', function($rootScope, $scope, $firebase, $loc
     //STATUSES: APPROVED, REJECTED, WAITING (for requestee), PENDING (for requester)
     //
     //
-    //var myFriendsRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + $scope.user.uid + "/friends");
+    //var myFriendsRef = new Firebase("https://pointi.firebaseio.com/users/" + $scope.user.uid + "/friends");
     //var friends = $firebase(myFriendsRef).$asArray();
     //friends.$loaded().then(function() {
     //    $scope.friends = friends;
     //});
     if($scope.user) {
-        var myFriendRequestsRef = new Firebase("https://iisjreg-playground.firebaseio.com/friends/" + $scope.user.uid);
+        var myFriendRequestsRef = new Firebase("https://pointi.firebaseio.com/friends/" + $scope.user.uid);
         var friendRequests = $firebase(myFriendRequestsRef).$asArray();
         friendRequests.$loaded().then(function() {
             $scope.friendRequests = friendRequests;
@@ -125,7 +125,7 @@ app.controller('FriendsController', function($rootScope, $scope, $firebase, $loc
         console.log("add friend " + $scope.friendEmail);
         var time = new Date();
         //FIND USER BY EMAIL ADDRESS
-        var usersRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/");
+        var usersRef = new Firebase("https://pointi.firebaseio.com/users/");
         var success = false;
         var friendUid = "";
         var currentFriendRecordID = "";
@@ -141,7 +141,7 @@ app.controller('FriendsController', function($rootScope, $scope, $firebase, $loc
                     console.log("3 " + "match! " + friendEmail);
                     var newFriend = childSnapshot.val(); //FRIEND USER OBJECT
                     console.log("4 " + newFriend);
-                    var friendsListRef = new Firebase("https://iisjreg-playground.firebaseio.com/friends/" + $scope.user.uid + "/" + newFriend.uid); //ADD CHILD FOR FRIEND UID
+                    var friendsListRef = new Firebase("https://pointi.firebaseio.com/friends/" + $scope.user.uid + "/" + newFriend.uid); //ADD CHILD FOR FRIEND UID
                     friendsListRef.set({
                         email: friendEmail, //EMAIL OF FRIEND
                         name: friendName, //NAME OF FRIEND
@@ -150,7 +150,7 @@ app.controller('FriendsController', function($rootScope, $scope, $firebase, $loc
                     });
                     //UPDATE FRIEND'S FRIEND REQUESTS LIST
                     console.log("5 " + newFriend.uid); //FRIEND'S UID
-                    var otherFriendsListRef = new Firebase("https://iisjreg-playground.firebaseio.com/friends/" + newFriend.uid + "/" + $scope.user.uid); //ADD CHILD FOR CURRENT USER UID
+                    var otherFriendsListRef = new Firebase("https://pointi.firebaseio.com/friends/" + newFriend.uid + "/" + $scope.user.uid); //ADD CHILD FOR CURRENT USER UID
                     var email = $scope.user.password.email; //CURRENT USER'S EMAIL
                     var name = $scope.userDetails.name; //CURRENT USER'S NAME
                     console.log("6 " + email);
@@ -182,12 +182,12 @@ app.controller('FriendsController', function($rootScope, $scope, $firebase, $loc
             newStatus = "REJECTED";
         }
         //console.log("requester.$id " + request.$id + " " + request.status)
-        var FriendRequestsListRef = new Firebase("https://iisjreg-playground.firebaseio.com/friends/" + $scope.user.uid + "/" + requester.$id);
+        var FriendRequestsListRef = new Firebase("https://pointi.firebaseio.com/friends/" + $scope.user.uid + "/" + requester.$id);
         FriendRequestsListRef.update({
             status: newStatus
         });
         console.log("current user updated");
-        var otherFriendRequestsListRef = new Firebase("https://iisjreg-playground.firebaseio.com/friends/" + requester.$id + "/" + $scope.user.uid);
+        var otherFriendRequestsListRef = new Firebase("https://pointi.firebaseio.com/friends/" + requester.$id + "/" + $scope.user.uid);
         otherFriendRequestsListRef.update({
             status: newStatus
         });
@@ -197,7 +197,7 @@ app.controller('FriendsController', function($rootScope, $scope, $firebase, $loc
 app.controller('ScoreController', function($rootScope, $scope, $firebase) {
     //SCORE TESTING
     //CREATE A FIREBASE REFERENCE
-    var ref = new Firebase("https://iisjreg-playground.firebaseio.com/scores");
+    var ref = new Firebase("https://pointi.firebaseio.com/scores");
     //
     // first score demo
     //
@@ -221,7 +221,7 @@ app.controller('ScoreController', function($rootScope, $scope, $firebase) {
 app.controller('ScoreController2', function($rootScope, $scope, $firebase) {
     //SCORE TESTING - n Players
     //CREATE A FIREBASE REFERENCE
-    var ref = new Firebase("https://iisjreg-playground.firebaseio.com/scores2");
+    var ref = new Firebase("https://pointi.firebaseio.com/scores2");
     //
     // adds n-players scoring, with buttons for adding/subtracting
     // and adding /deleting players
@@ -286,16 +286,16 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
             //show individual play
             console.log("params playID = " + params.playID);
             //PLAY REF
-            var playRef = new Firebase("https://iisjreg-playground.firebaseio.com/plays/" + params.playID);
+            var playRef = new Firebase("https://pointi.firebaseio.com/plays/" + params.playID);
             var play = $firebase(playRef).$asObject();
             $scope.play = play;
             //PLAYERS REF
-            var playerRef = new Firebase("https://iisjreg-playground.firebaseio.com/plays/" + params.playID + "/players");
+            var playerRef = new Firebase("https://pointi.firebaseio.com/plays/" + params.playID + "/players");
             var players = $firebase(playerRef).$asArray();
             //CAHT REF
-            var chatRef = new Firebase("https://iisjreg-playground.firebaseio.com/plays/" + params.playID + "/chat");
+            var chatRef = new Firebase("https://pointi.firebaseio.com/plays/" + params.playID + "/chat");
             var messages = $firebase(chatRef).$asArray();
-            var myFriendsRef = new Firebase("https://iisjreg-playground.firebaseio.com/friends/" + $scope.user.uid);
+            var myFriendsRef = new Firebase("https://pointi.firebaseio.com/friends/" + $scope.user.uid);
             var friends = $firebase(myFriendsRef).$asArray();
             friends.$loaded().then(function() {
                 $scope.friends = friends;
@@ -350,7 +350,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                     var friend = $scope.addFriend;
                     var friendColor = "";
                     var friendName = "";
-                    var friendUserRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + friend.$id);
+                    var friendUserRef = new Firebase("https://pointi.firebaseio.com/users/" + friend.$id);
                     friendUserRef.once('value', function(dataSnapshot) {
                         //console.log("get user details");
                         friendColor = dataSnapshot.child("details").child("favouriteColor").val();
@@ -368,7 +368,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                             color: friendColor
                         });
                         console.log(friendName + "added");
-                        var accessRef = new Firebase("https://iisjreg-playground.firebaseio.com/play-access/" + friend.$id + "/" + play.$id);
+                        var accessRef = new Firebase("https://pointi.firebaseio.com/play-access/" + friend.$id + "/" + play.$id);
                         accessRef.set({
                             time: time.toUTCString()
                         });
@@ -474,7 +474,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
         } else {
             //show all plays
             console.log("no params");
-            var ref = new Firebase("https://iisjreg-playground.firebaseio.com/play-access/" + $scope.user.uid);
+            var ref = new Firebase("https://pointi.firebaseio.com/play-access/" + $scope.user.uid);
             var availablePlays = $firebase(ref).$asArray();
             availablePlays.$loaded().then(function() {
                 $rootScope.loading = false;
@@ -487,7 +487,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                         //EACH PLAY
                         var playId = childSnapshot.key();
                         console.log("playId: " + playId);
-                        var playRef = new Firebase("https://iisjreg-playground.firebaseio.com/plays/" + playId);
+                        var playRef = new Firebase("https://pointi.firebaseio.com/plays/" + playId);
                         var sync = $firebase(playRef);
                         var playSync = sync.$asObject();
                         playsToShow[playCount] = playSync;
@@ -501,7 +501,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                 //$scope.availablePlays = availablePlays;
                 $scope.addPlay = function() {
                     //numberOfPlays += 1;
-                    var playsRef = new Firebase("https://iisjreg-playground.firebaseio.com/plays/");
+                    var playsRef = new Firebase("https://pointi.firebaseio.com/plays/");
                     var plays = $firebase(playsRef).$asArray();
                     var gameName = $scope.gameName || 'anonymous';
                     var time = new Date();
@@ -518,7 +518,7 @@ app.controller('ScoreController3', function($rootScope, $scope, $firebase, $rout
                     }).then(function(ref) {
                         var id = ref.key();
                         console.log("added record with id " + id);
-                        var accessRef = new Firebase("https://iisjreg-playground.firebaseio.com/play-access/" + $scope.user.uid + "/" + id);
+                        var accessRef = new Firebase("https://pointi.firebaseio.com/play-access/" + $scope.user.uid + "/" + id);
                         accessRef.set({
                             time: time.toUTCString()
                         });
@@ -542,11 +542,11 @@ app.controller('historyController', function($rootScope, $scope, $firebase, $rou
         var testdata = new google.visualization.DataTable();
         //show individual play
         console.log("params playID = " + params.playID);
-        var playRef = new Firebase("https://iisjreg-playground.firebaseio.com/plays/" + params.playID);
+        var playRef = new Firebase("https://pointi.firebaseio.com/plays/" + params.playID);
         var play = $firebase(playRef).$asObject();
         //play.$bindTo($scope, "play");
         $scope.play = play;
-        var playerRef = new Firebase("https://iisjreg-playground.firebaseio.com/plays/" + params.playID + "/players");
+        var playerRef = new Firebase("https://pointi.firebaseio.com/plays/" + params.playID + "/players");
         var players = $firebase(playerRef).$asArray();
         players.$loaded().then(function() {
             console.log(players.length + " players in play");
@@ -649,7 +649,7 @@ app.controller('MainController', function($rootScope, $scope, $firebase, $window
     $scope.auth = Auth;
     $scope.user = $scope.auth.$getAuth();
     if($scope.user) {
-        var userRef = new Firebase("https://iisjreg-playground.firebaseio.com/users/" + $scope.user.uid + "/details");
+        var userRef = new Firebase("https://pointi.firebaseio.com/users/" + $scope.user.uid + "/details");
         var userDetails = $firebase(userRef).$asObject();
         $scope.userDetails = userDetails;
     }
@@ -687,7 +687,7 @@ app.controller('MainController', function($rootScope, $scope, $firebase, $window
         console.log($scope.form.newColor);
         $scope.auth.$createUser($scope.form.newEmail, $scope.form.newPassword).then(function() {
             console.log("User created successfully!");
-            var usersRef = new Firebase("https://iisjreg-playground.firebaseio.com/users");
+            var usersRef = new Firebase("https://pointi.firebaseio.com/users");
             usersRef.onAuth(function(authData) {
                 if(authData && isNewUser) {
                     // save the user's profile into Firebase so we can list users,

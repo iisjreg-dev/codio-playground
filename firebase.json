@@ -5,6 +5,7 @@
     "firebase.json",
     "**/.*",
     "**/node_modules/**",
+    "bower_components/**",
     "*.sh",
     "*.codio",
     "*.settings"
