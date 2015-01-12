@@ -14,7 +14,7 @@
 ; enter your terminal preferences here...
 
 [preview]
-index_file = bower_components/mobile-angular-ui/demo/index.html
+index_file = index.html
 ; enter your preview preferences here...
 
 [search]
